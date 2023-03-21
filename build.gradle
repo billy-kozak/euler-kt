@@ -1,0 +1,48 @@
+/******************************************************************************
+* This file is part of euler-kt                                               *
+* Copyright (C) 2023 Bill Kozak                                               *
+*                                                                             *
+* This program is free software: you can redistribute it and/or modify        *
+* it under the terms of the GNU Lesser General Public License as published by *
+* the Free Software Foundation, either version 3 of the License, or           *
+* (at your option) any later version.                                         *
+*                                                                             *
+* This program is distributed in the hope that it will be useful,             *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
+* GNU Lesser General Public License for more details.                         *
+*                                                                             *
+* You should have received a copy of the GNU Lesser General Public License    *
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.      *
+******************************************************************************/
+
+plugins {
+    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
+    id 'org.jetbrains.kotlin.jvm' version '1.8.10'
+
+    // Apply the application plugin to add support for building a CLI application in Java.
+    id 'application'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    // Use the Kotlin JUnit 5 integration.
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+
+    // Use the JUnit 5 integration.
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'euler_kt.main.MainKt'
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}
