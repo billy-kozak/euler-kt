@@ -17,32 +17,48 @@
 ******************************************************************************/
 
 plugins {
-    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     id 'org.jetbrains.kotlin.jvm' version '1.8.10'
-
-    // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
 }
 
+ext.mainClass = 'euler_kt.main.MainKt'
+
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
-    // Use the Kotlin JUnit 5 integration.
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+    implementation 'info.picocli:picocli:4.7.+'
 
-    // Use the JUnit 5 integration.
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
 }
 
 application {
-    // Define the main class for the application.
-    mainClass = 'euler_kt.main.MainKt'
+    mainClass = project.mainClass
 }
 
 tasks.named('test') {
-    // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+tasks.named('build') {
+    dependsOn('generateScripts')
+}
+
+tasks.register('generateScripts') {
+    dependsOn('jar')
+    doLast {
+        new File('scripts').mkdirs()
+        def script = new File('scripts/euler-kt')
+
+        def jarPath = jar.archiveFile.get().asFile
+        def classPath = sourceSets.main.compileClasspath.asPath
+
+        script.text = """#!/usr/bin/env bash
+
+            exec java -cp ${classPath}:${jarPath} ${project.mainClass} "\${@}"
+        """.stripIndent()
+        script.setExecutable(true)
+    }
 }
