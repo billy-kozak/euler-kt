@@ -24,7 +24,7 @@ import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
 
 @State(Scope.Thread)
-open class Problem1(private val keyParam: Int = 1000) : EulerProblem<Int> {
+open class Problem1(override val defaultKeyParam: Int = 1000) : EulerProblem<Int, Int> {
 
     override fun description(): String {
         return (
@@ -35,7 +35,11 @@ open class Problem1(private val keyParam: Int = 1000) : EulerProblem<Int> {
     }
 
     @Benchmark
-    override fun run(): Int {
+    fun jmhBenchmark() {
+        run(defaultKeyParam)
+    }
+
+    override fun run(keyParam: Int): Int {
         return sumOfMultiples(3, keyParam) + sumOfMultiples(5, keyParam) - sumOfMultiples(15, keyParam)
     }
 

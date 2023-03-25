@@ -27,7 +27,7 @@ import java.lang.AssertionError
 
 fun main(args: Array<String>) {
 
-    val problems: Map<Int, EulerProblem<*>> = mapOf(
+    val problems: Map<Int, EulerProblem<*, *>> = mapOf(
         Pair(1, Problem1())
     )
     val progArgs = parseArgs(args, problems.keys)
@@ -52,15 +52,15 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun createBenchmarkFunction(args: ProgArgs): (EulerProblem<*>, Int) -> ProblemResult {
-    val runHarness: (EulerProblem<*>, Int) -> ProblemResult =
+private fun createBenchmarkFunction(args: ProgArgs): (EulerProblem<*, *>, Int) -> ProblemResult {
+    val runHarness: (EulerProblem<*, *>, Int) -> ProblemResult =
         if(args.runType() == ProgArgs.RunType.BENCHMARK) {
             ::runJmhHarness
         } else {
             ::runInSimpleHarness
         }
 
-    val runAndPrintDescription: (EulerProblem<*>, Int) -> ProblemResult =
+    val runAndPrintDescription: (EulerProblem<*, *>, Int) -> ProblemResult =
         if(args.printDescription()) {
             { problem, problemNumber ->
                 println(problem.description())

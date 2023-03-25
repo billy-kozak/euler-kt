@@ -18,8 +18,12 @@
 
 package euler_kt.main.framework
 
-interface EulerProblem <out T : Number> {
+interface EulerProblem <out T : Number, P : Number> {
+
+    val defaultKeyParam: P
     fun description(): String
-    fun run(): T
+
     fun validate(result: Number): Boolean
+
+    fun run(keyParam: P = defaultKeyParam): T
 }
