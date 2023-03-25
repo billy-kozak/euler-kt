@@ -18,21 +18,13 @@
 
 package euler_kt.main.framework
 
-class ProblemValidation (
-    override val problem: Int,
-    override val time: Double,
-    val answer: Number,
-    val valid: Boolean
-) : ProblemResult {
+class BenchmarkResult(override val problem: Int, override val time: Double): ProblemResult {
+
     override fun description(): String {
         return toString()
     }
 
     override fun toString(): String {
-        return (
-            "Problem $problem " +
-            if(!valid) "failed with wrong answer: '${answer}'." else "succeeded with correct answer " +
-            "$answer, with a run time of ${"%.3f".format(time)}ms."
-        )
+        return "Problem $problem average run time: ${"%.3f".format(time)}ms"
     }
 }

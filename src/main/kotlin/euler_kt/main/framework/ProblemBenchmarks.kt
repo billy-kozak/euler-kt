@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrElse
 
 
-fun runInSimpleHarness(problem: EulerProblem<*, *>, problemNumber: Int): ProblemValidation {
+fun runInSimpleHarness(problem: EulerProblem<*, *>, problemNumber: Int): ValidationResult {
     val t0 = System.nanoTime();
     val result = problem.run()
     val t1 = System.nanoTime()
@@ -36,10 +36,10 @@ fun runInSimpleHarness(problem: EulerProblem<*, *>, problemNumber: Int): Problem
     val valid = problem.validate(result)
 
     // return problem result
-    return ProblemValidation(problemNumber, (t1 - t0).toDouble() / 1000000, result, valid)
+    return ValidationResult(problemNumber, (t1 - t0).toDouble() / 1000000, result, valid)
 }
 
-fun runJmhHarness(problem: EulerProblem<*, *>, problemNumber: Int): ProblemBenchmark {
+fun runJmhHarness(problem: EulerProblem<*, *>, problemNumber: Int): BenchmarkResult {
 
     val opt: Options = OptionsBuilder() // Specify which benchmarks to run.
         .include(problem.javaClass.simpleName + ".*")
@@ -63,5 +63,5 @@ fun runJmhHarness(problem: EulerProblem<*, *>, problemNumber: Int): ProblemBench
         run.secondaryResults.forEach({ println(it) })
     }
 
-    return ProblemBenchmark(problemNumber, time)
+    return BenchmarkResult(problemNumber, time)
 }
