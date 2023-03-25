@@ -19,8 +19,12 @@
 package euler_kt.main.problems
 
 import euler_kt.main.framework.EulerProblem
+import org.openjdk.jmh.annotations.Benchmark
+import org.openjdk.jmh.annotations.Scope
+import org.openjdk.jmh.annotations.State
 
-class Problem1(private val keyParam: Int = 1000) : EulerProblem<Int> {
+@State(Scope.Thread)
+open class Problem1(private val keyParam: Int = 1000) : EulerProblem<Int> {
 
     override fun description(): String {
         return (
@@ -30,6 +34,7 @@ class Problem1(private val keyParam: Int = 1000) : EulerProblem<Int> {
         )
     }
 
+    @Benchmark
     override fun run(): Int {
         return sumOfMultiples(3, keyParam) + sumOfMultiples(5, keyParam) - sumOfMultiples(15, keyParam)
     }

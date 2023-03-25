@@ -18,8 +18,13 @@
 
 package euler_kt.main.framework
 
-interface ProblemResult {
-    val problem: Int
-    val time: Double
-    fun description(): String
+class ProblemBenchmark(override val problem: Int, override val time: Double): ProblemResult {
+
+    override fun description(): String {
+        return toString()
+    }
+
+    override fun toString(): String {
+        return "Problem $problem average run time: ${"%.3f".format(time)}ms"
+    }
 }

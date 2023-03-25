@@ -18,7 +18,17 @@
 
 package euler_kt.main.framework
 
-fun runInSimpleHarness(problem: EulerProblem<*>, problemNumber: Int): ProblemResult {
+import org.openjdk.jmh.annotations.Mode
+import org.openjdk.jmh.runner.Runner
+import org.openjdk.jmh.runner.options.Options
+import org.openjdk.jmh.runner.options.OptionsBuilder
+import org.openjdk.jmh.runner.options.TimeValue
+
+import java.util.concurrent.TimeUnit
+import kotlin.jvm.optionals.getOrElse
+
+
+fun runInSimpleHarness(problem: EulerProblem<*>, problemNumber: Int): ProblemValidation {
     val t0 = System.nanoTime();
     val result = problem.run()
     val t1 = System.nanoTime()
@@ -26,5 +36,32 @@ fun runInSimpleHarness(problem: EulerProblem<*>, problemNumber: Int): ProblemRes
     val valid = problem.validate(result)
 
     // return problem result
-    return ProblemResult(problemNumber, result, valid, (t1 - t0).toDouble() / 1000000)
+    return ProblemValidation(problemNumber, (t1 - t0).toDouble() / 1000000, result, valid)
+}
+
+fun runJmhHarness(problem: EulerProblem<*>, problemNumber: Int): ProblemBenchmark {
+
+    val opt: Options = OptionsBuilder() // Specify which benchmarks to run.
+        .include(problem.javaClass.simpleName + ".*")
+        .mode(Mode.AverageTime)
+        .timeUnit(TimeUnit.MILLISECONDS)
+        .warmupTime(TimeValue.seconds(1))
+        .warmupIterations(2)
+        .measurementIterations(2)
+        .measurementTime(TimeValue.seconds(1))
+        .threads(2)
+        .forks(1)
+        .shouldFailOnError(true)
+        .shouldDoGC(true)
+        .output("/dev/null")
+        .build()
+
+    val result = Runner(opt).run()
+    val time = result.stream().map{it.aggregatedResult.primaryResult.score}.findFirst().getOrElse{Double.NaN}
+
+    for(run in result) {
+        run.secondaryResults.forEach({ println(it) })
+    }
+
+    return ProblemBenchmark(problemNumber, time)
 }

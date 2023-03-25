@@ -19,6 +19,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.8.10'
     id 'application'
+    id "org.jetbrains.kotlin.kapt" version "1.8.10"
 }
 
 ext.mainClass = 'euler_kt.main.MainKt'
@@ -29,6 +30,8 @@ repositories {
 
 dependencies {
     implementation 'info.picocli:picocli:4.7.+'
+    implementation 'org.openjdk.jmh:jmh-core:1.33'
+    kapt 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'

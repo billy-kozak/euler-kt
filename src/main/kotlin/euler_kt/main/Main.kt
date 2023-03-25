@@ -18,7 +18,9 @@
 package euler_kt.main
 
 import euler_kt.main.framework.EulerProblem
+import euler_kt.main.framework.ProblemResult
 import euler_kt.main.framework.runInSimpleHarness
+import euler_kt.main.framework.runJmhHarness
 import euler_kt.main.problems.Problem1
 import picocli.CommandLine
 import java.lang.AssertionError
@@ -30,12 +32,12 @@ fun main(args: Array<String>) {
     )
     val progArgs = parseArgs(args, problems.keys)
 
+    val runBenchmark = createBenchmarkFunction(progArgs)
+
     if(progArgs.runAll()) {
-        problems.forEach { (problemNumber, problem) ->
-            if(progArgs.printDescription()) {
-                println(problem.description())
-            }
-            println(runInSimpleHarness(problem, problemNumber))
+        problems.forEach {(problemNumber, problem) ->
+            val result = runBenchmark(problem, problemNumber)
+            println(result)
         }
     } else {
         val problemNumber = progArgs.getProblem()
@@ -43,14 +45,34 @@ fun main(args: Array<String>) {
         when(val problem = problems[problemNumber]) {
             null -> throw AssertionError("Should not be possible")
             else -> {
-                if(progArgs.printDescription()) {
-                    println(problem.description())
-                }
-                println(runInSimpleHarness(problem, problemNumber))
+                val result = runBenchmark(problem, problemNumber)
+                println(result)
             }
         }
     }
 }
+
+private fun createBenchmarkFunction(args: ProgArgs): (EulerProblem<*>, Int) -> ProblemResult {
+    val runHarness: (EulerProblem<*>, Int) -> ProblemResult =
+        if(args.runType() == ProgArgs.RunType.BENCHMARK) {
+            ::runJmhHarness
+        } else {
+            ::runInSimpleHarness
+        }
+
+    val runAndPrintDescription: (EulerProblem<*>, Int) -> ProblemResult =
+        if(args.printDescription()) {
+            { problem, problemNumber ->
+                println(problem.description())
+                runHarness(problem, problemNumber)
+            }
+        } else {
+            runHarness
+        }
+
+    return runAndPrintDescription
+}
+
 
 private fun parseArgs(args: Array<String>, implementedProblems: Set<Int>): ProgArgs {
     val progArgs = ProgArgs(implementedProblems)

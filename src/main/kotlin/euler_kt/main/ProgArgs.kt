@@ -17,12 +17,10 @@
  */
 package euler_kt.main
 
-import picocli.CommandLine.Command
+import picocli.CommandLine.*
 import picocli.CommandLine.Model.CommandSpec
-import picocli.CommandLine.Option
-import picocli.CommandLine.ParameterException
-import picocli.CommandLine.Spec
 import java.util.concurrent.Callable
+
 
 @Command(
     name="euler-kt",
@@ -44,12 +42,46 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
     @Option(names=["-a", "--all"], description=["Solve all implemented problems"])
     private var all: Boolean = false
 
+    @ArgGroup(exclusive = true, multiplicity = "0..1")
+    private var runType: RunTypeOption = RunTypeOption(validate = true)
+
+    internal open class RunTypeOption() {
+        constructor(validate: Boolean = false, benchmark: Boolean = false) : this() {
+            this.validate = validate;
+            this.benchmark = benchmark;
+        }
+
+        @Option(names=["-t", "--validate"], description=["Validate the solution to the problem. This is the default"])
+        private var validate: Boolean = false
+
+        @Option(names=["-b", "--benchmark"], description=["Benchmark the solution to the problem"])
+        private var benchmark: Boolean = false
+
+        fun runType(): RunType {
+            if(validate) {
+                return RunType.VALIDATE;
+            } else if(benchmark) {
+                return RunType.BENCHMARK;
+            } else {
+                throw IllegalStateException("Invalid run type");
+            }
+        }
+    }
+
+    enum class RunType {
+        VALIDATE, BENCHMARK
+    }
+
     fun printDescription(): Boolean {
         return description;
     }
 
     fun getProblem(): Int {
         return problem;
+    }
+
+    fun runType(): RunType {
+        return runType.runType();
     }
 
     fun runAll(): Boolean {
