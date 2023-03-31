@@ -42,6 +42,33 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
     @Option(names=["-a", "--all"], description=["Solve all implemented problems"])
     private var all: Boolean = false
 
+    @Option(
+        names=["-w", "--warmup-time"],
+        description=["Warmup time for benchmark in ms. Applies only to benchmark runs. Default is 1000ms."]
+    )
+    private var warmupTime: Long = 1000
+
+    @Option(
+        names=[ "--maximum-warmup-time"],
+        description=[
+            "Maximum warmup time for benchmark in ms. Applies only to benchmark runs (but not JMH). Default is" +
+            " 3x the warmup time. if a single test run lasts longer than this time. Then, rather than running " +
+            " measurement iterations, we will report the warmup time as the measurement time."
+        ]
+    )
+    private var maximumWarmupTime: Long = 0
+
+    @Option(
+        names=["--warmup-iterations"],
+        description=["Number of warmup iterations for benchmark. Applies only to benchmark runs. Default is 2."]
+    )
+    private var warmupIterations: Int = 2
+
+    @Option(names=["-i", "--iterations"], description=[
+        "Number of iterations for benchmark. Applies only to benchmark runs. Default is 10."
+    ])
+    private var iterations: Int = 10
+
     @ArgGroup(exclusive = true, multiplicity = "0..1")
     private var runType: RunTypeOption = RunTypeOption(validate = true)
 
@@ -54,14 +81,19 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
         @Option(names=["-t", "--validate"], description=["Validate the solution to the problem. This is the default"])
         private var validate: Boolean = false
 
-        @Option(names=["-b", "--benchmark"], description=["Benchmark the solution to the problem"])
+        @Option(names=["-j", "--jmh-benchmark"], description=["Benchmark the solution using JMH"])
+        private var jmh: Boolean = false
+
+        @Option(names=["-b", "--benchmark"], description=["Benchmark using builtin framework"])
         private var benchmark: Boolean = false
 
         fun runType(): RunType {
             if(validate) {
-                return RunType.VALIDATE;
+                return RunType.VALIDATE
             } else if(benchmark) {
-                return RunType.BENCHMARK;
+                return RunType.BENCHMARK
+            } else if(jmh) {
+                return RunType.JMH_BENCHMARK
             } else {
                 throw IllegalStateException("Invalid run type");
             }
@@ -69,7 +101,7 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
     }
 
     enum class RunType {
-        VALIDATE, BENCHMARK
+        VALIDATE, BENCHMARK, JMH_BENCHMARK
     }
 
     fun printDescription(): Boolean {
@@ -86,6 +118,26 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
 
     fun runAll(): Boolean {
         return all;
+    }
+
+    fun warmupTime(): Long {
+        return warmupTime;
+    }
+
+    fun maximumWarmupTime(): Long {
+        if(maximumWarmupTime <= 0) {
+            return warmupTime * 3
+        } else {
+            return maximumWarmupTime
+        }
+    }
+
+    fun warmupIterations(): Int {
+        return warmupIterations
+    }
+
+    fun iterations(): Int {
+        return iterations
     }
 
     override fun call(): Int {

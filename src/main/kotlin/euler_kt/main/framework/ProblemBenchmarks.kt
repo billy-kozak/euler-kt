@@ -39,15 +39,21 @@ fun runInSimpleHarness(problem: EulerProblem<*, *>, problemNumber: Int): Validat
     return ValidationResult(problemNumber, (t1 - t0).toDouble() / 1000000, result, valid)
 }
 
-fun runJmhHarness(problem: EulerProblem<*, *>, problemNumber: Int): BenchmarkResult {
+fun runJmhHarness(
+        problem: EulerProblem<*, *>,
+        problemNumber: Int,
+        warmupTimeMs: Long = 1000,
+        warmupIterations: Int = 2,
+        measurementIterations: Int = 2
+): BenchmarkResult {
 
-    val opt: Options = OptionsBuilder() // Specify which benchmarks to run.
+    val opt: Options = OptionsBuilder()
         .include(problem.javaClass.simpleName + ".*")
         .mode(Mode.AverageTime)
         .timeUnit(TimeUnit.MILLISECONDS)
-        .warmupTime(TimeValue.seconds(1))
-        .warmupIterations(2)
-        .measurementIterations(2)
+        .warmupTime(TimeValue.milliseconds(warmupTimeMs))
+        .warmupIterations(warmupIterations)
+        .measurementIterations(measurementIterations)
         .measurementTime(TimeValue.seconds(1))
         .threads(2)
         .forks(1)
@@ -64,4 +70,25 @@ fun runJmhHarness(problem: EulerProblem<*, *>, problemNumber: Int): BenchmarkRes
     }
 
     return BenchmarkResult(problemNumber, time)
+}
+
+fun runBenchmark(
+    problem: EulerProblem<*, *>,
+    problemNumber: Int,
+    warmupTimeMs: Long = 1000,
+    maximumWarmupTimeMs: Long = 30000,
+    warmupIterations: Int = 2,
+    measurementIterations: Int = 2
+): ProblemResult {
+
+    val harness: ProblemHarness = ProblemHarness.Builder()
+        .warmupTime(warmupTimeMs)
+        .maximumWarmupTime(maximumWarmupTimeMs)
+        .warmupIterations(warmupIterations)
+        .measurementIterations(measurementIterations)
+        .warmupTimeUnit(TimeUnit.MILLISECONDS)
+        .problem(problemNumber, problem)
+        .build()
+
+    return harness.benchmark()
 }

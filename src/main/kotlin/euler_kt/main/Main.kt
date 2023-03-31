@@ -17,10 +17,7 @@
  */
 package euler_kt.main
 
-import euler_kt.main.framework.EulerProblem
-import euler_kt.main.framework.ProblemResult
-import euler_kt.main.framework.runInSimpleHarness
-import euler_kt.main.framework.runJmhHarness
+import euler_kt.main.framework.*
 import euler_kt.main.problems.Problem1
 import picocli.CommandLine
 import java.lang.AssertionError
@@ -54,9 +51,29 @@ fun main(args: Array<String>) {
 
 private fun createBenchmarkFunction(args: ProgArgs): (EulerProblem<*, *>, Int) -> ProblemResult {
     val runHarness: (EulerProblem<*, *>, Int) -> ProblemResult =
-        if(args.runType() == ProgArgs.RunType.BENCHMARK) {
-            ::runJmhHarness
-        } else {
+        if(args.runType() == ProgArgs.RunType.JMH_BENCHMARK) {
+            { problem, problemNumber ->
+                runJmhHarness(
+                    problem,
+                    problemNumber,
+                    args.warmupTime(),
+                    args.warmupIterations(),
+                    args.iterations()
+                )
+            }
+        } else if(args.runType() == ProgArgs.RunType.BENCHMARK) {
+            { problem, problemNumber ->
+                runBenchmark(
+                    problem,
+                    problemNumber,
+                    args.warmupTime(),
+                    args.maximumWarmupTime(),
+                    args.warmupIterations(),
+                    args.iterations()
+                )
+            }
+        }
+        else {
             ::runInSimpleHarness
         }
 
