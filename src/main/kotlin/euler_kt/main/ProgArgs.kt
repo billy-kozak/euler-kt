@@ -25,7 +25,7 @@ import java.util.concurrent.Callable
 @Command(
     name="euler-kt",
     mixinStandardHelpOptions=true,
-    version=["euler-kt 0.1.0"],
+    version=["euler-kt 1.0.0"],
     description=["Solve Project Euler problems in Kotlin"]
 )
 class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable<Int> {
