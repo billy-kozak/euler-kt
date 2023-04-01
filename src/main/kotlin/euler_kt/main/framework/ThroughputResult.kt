@@ -18,13 +18,31 @@
 
 package euler_kt.main.framework
 
-class BenchmarkResult(override val problem: Int, override val score: Double): ProblemResult {
+import java.util.concurrent.TimeUnit
 
+class ThroughputResult(
+    override val problem: Int,
+    override val score: Double,
+    val answer: Number,
+    val valid: Boolean,
+    val runTime: Long,
+    val timeUnit: TimeUnit
+) : ProblemResult  {
     override fun description(): String {
         return toString()
     }
 
     override fun toString(): String {
-        return "Problem $problem average run time: ${"%.3f".format(score)}ms"
+        if(valid) {
+            return (
+                "Problem $problem succeeded with correct answer $answer, " +
+                "with a throughput of ${"%.3f".format(score)} in ${timeUnit.toSeconds(runTime)} seconds."
+            )
+        } else {
+            return (
+                "Problem $problem failed with wrong answer: '${answer}', " +
+                "with a throughput of ${"%.3f".format(score)} in ${timeUnit.toSeconds(runTime)} seconds."
+            )
+        }
     }
 }

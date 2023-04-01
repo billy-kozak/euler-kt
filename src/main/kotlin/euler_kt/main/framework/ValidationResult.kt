@@ -20,7 +20,7 @@ package euler_kt.main.framework
 
 class ValidationResult (
     override val problem: Int,
-    override val time: Double,
+    override val score: Double,
     val answer: Number,
     val valid: Boolean,
     val runs: Int = 1
@@ -34,12 +34,12 @@ class ValidationResult (
             return "Problem $problem failed with wrong answer: '${answer}'."
         } else if(runs == 1) {
             return (
-                "Problem $problem succeeded with correct answer $answer, with a run time of ${"%.3f".format(time)}ms."
+                "Problem $problem succeeded with correct answer $answer, with a run time of ${"%.3f".format(score)}ms."
             )
         } else {
             return (
                 "Problem $problem succeeded with correct answer $answer, " +
-                "with an average run time of ${"%.3f".format(time)}ms ($runs runs)."
+                "with an average run time of ${"%.3f".format(score)}ms ($runs runs)."
             )
         }
     }

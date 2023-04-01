@@ -81,13 +81,39 @@ fun runBenchmark(
     measurementIterations: Int = 2
 ): ProblemResult {
 
-    val harness: ProblemHarness = ProblemHarness.Builder()
+    val builder: AverageTimeHarness.Builder = AverageTimeHarness.Builder()
+
+    builder.measurementIterations(measurementIterations)
+
+    val harness: AverageTimeHarness = AverageTimeHarness.Builder()
+        .measurementIterations(measurementIterations)
         .warmupTime(warmupTimeMs)
         .maximumWarmupTime(maximumWarmupTimeMs)
         .warmupIterations(warmupIterations)
-        .measurementIterations(measurementIterations)
         .warmupTimeUnit(TimeUnit.MILLISECONDS)
         .problem(problemNumber, problem)
+        .build()
+
+    return harness.benchmark()
+}
+
+fun runThroughput(
+    problem: EulerProblem<*, *>,
+    problemNumber: Int,
+    warmupTimeMs: Long,
+    maximumWarmupTimeMs: Long,
+    warmupIterations: Int,
+    measurementTime: Long,
+    measurementTimeUnit: TimeUnit
+): ProblemResult {
+
+    val harness = ThroughputHarness.Builder()
+        .warmupTime(warmupTimeMs)
+        .maximumWarmupTime(maximumWarmupTimeMs)
+        .warmupIterations(warmupIterations)
+        .warmupTimeUnit(TimeUnit.MILLISECONDS)
+        .problem(problemNumber, problem)
+        .measurementTime(measurementTime, measurementTimeUnit)
         .build()
 
     return harness.benchmark()

@@ -19,13 +19,16 @@ package euler_kt.main
 
 import euler_kt.main.framework.*
 import euler_kt.main.problems.Problem1
+import euler_kt.main.problems.Problem2
 import picocli.CommandLine
 import java.lang.AssertionError
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
 
     val problems: Map<Int, EulerProblem<*, *>> = mapOf(
-        Pair(1, Problem1())
+        Pair(1, Problem1()),
+        Pair(2, Problem2())
     )
     val progArgs = parseArgs(args, problems.keys)
 
@@ -70,6 +73,18 @@ private fun createBenchmarkFunction(args: ProgArgs): (EulerProblem<*, *>, Int) -
                     args.maximumWarmupTime(),
                     args.warmupIterations(),
                     args.iterations()
+                )
+            }
+        } else if(args.runType() == ProgArgs.RunType.THROUGHPUT) {
+            { problem, problemNumber ->
+                runThroughput(
+                    problem,
+                    problemNumber,
+                    args.warmupTime(),
+                    args.maximumWarmupTime(),
+                    args.warmupIterations(),
+                    args.measurementTime(),
+                    TimeUnit.SECONDS
                 )
             }
         }

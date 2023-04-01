@@ -69,6 +69,11 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
     ])
     private var iterations: Int = 10
 
+    @Option(names=["--measurement-time"], description=[
+        "How long to run the throughput benchmark in seconds. Applies only to throughput runs. Default is 10s."
+    ])
+    private var measurementTime: Long = 10
+
     @ArgGroup(exclusive = true, multiplicity = "0..1")
     private var runType: RunTypeOption = RunTypeOption(validate = true)
 
@@ -87,6 +92,14 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
         @Option(names=["-b", "--benchmark"], description=["Benchmark using builtin framework"])
         private var benchmark: Boolean = false
 
+        @Option(
+            names=["-r", "--throughput"],
+            description=[
+                "Measure how many times problem can be solved per time period. Uses builtin benchmark framework"
+            ]
+        )
+        private var throughput: Boolean = false
+
         fun runType(): RunType {
             if(validate) {
                 return RunType.VALIDATE
@@ -94,6 +107,8 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
                 return RunType.BENCHMARK
             } else if(jmh) {
                 return RunType.JMH_BENCHMARK
+            } else if(throughput) {
+                return RunType.THROUGHPUT
             } else {
                 throw IllegalStateException("Invalid run type");
             }
@@ -101,7 +116,11 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
     }
 
     enum class RunType {
-        VALIDATE, BENCHMARK, JMH_BENCHMARK
+        VALIDATE, BENCHMARK, JMH_BENCHMARK, THROUGHPUT
+    }
+
+    fun measurementTime(): Long {
+        return measurementTime;
     }
 
     fun printDescription(): Boolean {

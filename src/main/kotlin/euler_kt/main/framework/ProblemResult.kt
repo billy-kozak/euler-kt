@@ -20,6 +20,6 @@ package euler_kt.main.framework
 
 interface ProblemResult {
     val problem: Int
-    val time: Double
+    val score: Double
     fun description(): String
 }
