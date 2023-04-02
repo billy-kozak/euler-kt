@@ -20,25 +20,22 @@ package euler_kt.main.util.primes
 
 import euler_kt.main.util.functions.oddLongToNaturalInt
 import euler_kt.main.util.structures.BijectionBooleanArray
-import kotlin.math.nextUp
-import kotlin.math.sqrt
 
 fun eratosthenes(n: Long): List<Long> {
 
-    val sqrt = sqrt(n.toDouble().nextUp()).nextUp().toLong()
     val primes = mutableListOf<Long>(2)
-    val sieve = BijectionBooleanArray(sqrt + 1, ::oddLongToNaturalInt)
+    val sieve = BijectionBooleanArray(n + 1, ::oddLongToNaturalInt)
 
     if(n < 2) {
         return listOf()
     }
 
     var i = 3L
-    while(i <= sqrt) {
+    while(i <= n) {
         if(!sieve[i]) {
             primes.add(i)
             var j = i * i
-            while(j <= sqrt) {
+            while(j <= n) {
                 sieve[j] = true
                 j += i * 2
             }

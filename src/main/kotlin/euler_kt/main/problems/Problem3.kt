@@ -23,6 +23,8 @@ import euler_kt.main.util.primes.eratosthenes
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
+import kotlin.math.nextUp
+import kotlin.math.sqrt
 
 @State(Scope.Thread)
 open class Problem3(override val defaultKeyParam: Long = 600851475143L) : EulerProblem<Long, Long> {
@@ -44,7 +46,7 @@ open class Problem3(override val defaultKeyParam: Long = 600851475143L) : EulerP
     }
 
     override fun run(keyParam: Long): Long {
-        val primes = eratosthenes(keyParam)
+        val primes = eratosthenes(sqrt(keyParam.toDouble().nextUp()).nextUp().toLong())
 
         for (i in primes.size - 1 downTo 0) {
             val p = primes[i]
@@ -52,6 +54,7 @@ open class Problem3(override val defaultKeyParam: Long = 600851475143L) : EulerP
                 return p
             }
         }
+
         return keyParam
     }
 
