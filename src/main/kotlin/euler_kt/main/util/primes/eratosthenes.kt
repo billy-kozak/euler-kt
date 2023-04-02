@@ -61,6 +61,9 @@ fun eratosthenesWithPrecompute(n: Long): List<Long> {
     for(i in 1 until primes.size) {
         val p = primes[i]
         var nextMultiple = ((maxPrime / p) + 1) * p
+        if(nextMultiple % 2 == 0L) {
+            nextMultiple += p
+        }
         var j = max(nextMultiple, p * p)
 
         while(j <= n) {
