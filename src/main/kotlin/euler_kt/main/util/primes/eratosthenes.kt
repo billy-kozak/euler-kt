@@ -37,7 +37,7 @@ fun eratosthenes(n: Long): List<Long> {
     while(i <= sqrt) {
         if(!sieve[i]) {
             primes.add(i)
-            var j = i
+            var j = i * i
             while(j <= sqrt) {
                 sieve[j] = true
                 j += i * 2
