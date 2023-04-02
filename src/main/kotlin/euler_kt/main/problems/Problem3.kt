@@ -20,6 +20,7 @@ package euler_kt.main.problems
 
 import euler_kt.main.framework.EulerProblem
 import euler_kt.main.util.primes.eratosthenes
+import euler_kt.main.util.primes.eratosthenesWithPrecompute
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State

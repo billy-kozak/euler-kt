@@ -19,7 +19,9 @@
 package euler_kt.main.util.primes
 
 import euler_kt.main.util.functions.oddLongToNaturalInt
+import euler_kt.main.util.primes.Precompute.Companion.startPrimeListFromPrecompute
 import euler_kt.main.util.structures.BijectionBooleanArray
+import java.lang.Long.max
 
 fun eratosthenes(n: Long): List<Long> {
 
@@ -42,5 +44,41 @@ fun eratosthenes(n: Long): List<Long> {
         }
         i += 2
     }
+    return primes
+}
+
+fun eratosthenesWithPrecompute(n: Long): List<Long> {
+    val primes = startPrimeListFromPrecompute()
+    val maxPrime = primes.last()
+    val sieve = BijectionBooleanArray(
+        n + 1
+    ) { oddLongToNaturalInt(it - maxPrime + 1)}
+
+    if(n < 2) {
+        return listOf()
+    }
+
+    for(i in 1 until primes.size) {
+        val p = primes[i]
+        var nextMultiple = ((maxPrime / p) + 1) * p
+        var j = max(nextMultiple, p * p)
+
+        while(j <= n) {
+            sieve[j] = true
+            j += p * 2
+        }
+    }
+
+    for(i in maxPrime + 2..n step 2) {
+        if(!sieve[i]) {
+            primes.add(i)
+            var j = i * i
+            while(j <= n) {
+                sieve[j] = true
+                j += i * 2
+            }
+        }
+    }
+
     return primes
 }
