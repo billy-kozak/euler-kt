@@ -23,6 +23,10 @@ import euler_kt.main.util.primes.Precompute.Companion.startPrimeListFromPrecompu
 import euler_kt.main.util.structures.BijectionBooleanArray
 import java.lang.Long.max
 
+private val WHEEL_INCREMENTS: List<Int> = listOf(
+    4, 2, 4, 2, 4, 6, 2, 6
+)
+
 fun eratosthenes(n: Long): List<Long> {
 
     val primes = mutableListOf<Long>(2)
@@ -84,4 +88,66 @@ fun eratosthenesWithPrecompute(n: Long): List<Long> {
     }
 
     return primes
+}
+
+fun eratosthenesWithWheelFactorization(n: Long): List<Long> {
+
+    val primes = mutableListOf<Long>(2)
+
+    // save space, by building a mark list which is only valid for the "spokes" of the wheel factorization algorithm
+    val sieve = BijectionBooleanArray(
+        (((n / 30) + 1) * 30) + 1, ::wheelFactorizationBijectionFunction
+    )
+
+    for(i in arrayOf(2, 3, 5)) {
+        if(i <= n) {
+            primes.add(i.toLong())
+        }
+    }
+
+    var i = 7L
+    var incIdx = 0
+
+    while(i <= n) {
+        if(!sieve[i]) {
+            primes.add(i)
+            var j = i * i
+            while(j <= n) {
+                sieve[j] = true
+                j += i * 2
+            }
+        }
+        i += WHEEL_INCREMENTS[incIdx]
+        incIdx = (incIdx + 1) % WHEEL_INCREMENTS.size
+    }
+
+    return primes
+}
+
+private fun wheelFactorizationBijectionFunction(v: Long): Int {
+
+    when(v) {
+        2L -> return 0
+        3L -> return 1
+        5L -> return 3
+    }
+
+    val div = v / 30
+    val mod = v % 30
+
+    when(mod) {
+        7L -> return (div * 8 + 3).toInt()
+        11L -> return (div * 8 + 4).toInt()
+        13L -> return (div * 8 + 5).toInt()
+        17L -> return (div * 8 + 6).toInt()
+        19L -> return (div * 8 + 7).toInt()
+        23L -> return (div * 8 + 8).toInt()
+        29L -> return (div * 8 + 9).toInt()
+        1L -> return ((div * 8 + 10).toInt())
+    }
+
+    // We can't avoid these lookups in the wheel factorization algorithm, but we also don't care about the
+    // result, so we resolve to a valid index which we also don't care about. Since the algorithm never needs to
+    // do a lookup for '2', we can use that as a placeholder.
+    return 0
 }

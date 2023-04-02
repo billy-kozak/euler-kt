@@ -21,6 +21,7 @@ package euler_kt.main.problems
 import euler_kt.main.framework.EulerProblem
 import euler_kt.main.util.primes.eratosthenes
 import euler_kt.main.util.primes.eratosthenesWithPrecompute
+import euler_kt.main.util.primes.eratosthenesWithWheelFactorization
 import org.openjdk.jmh.annotations.Benchmark
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.State
@@ -47,7 +48,7 @@ open class Problem3(override val defaultKeyParam: Long = 600851475143L) : EulerP
     }
 
     override fun run(keyParam: Long): Long {
-        val primes = eratosthenes(sqrt(keyParam.toDouble().nextUp()).nextUp().toLong())
+        val primes = eratosthenesWithWheelFactorization(sqrt(keyParam.toDouble().nextUp()).nextUp().toLong())
 
         for (i in primes.size - 1 downTo 0) {
             val p = primes[i]
