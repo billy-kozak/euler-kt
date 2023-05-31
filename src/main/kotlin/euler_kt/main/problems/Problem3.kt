@@ -29,30 +29,38 @@ import org.openjdk.jmh.annotations.State
 import kotlin.math.nextUp
 import kotlin.math.sqrt
 
-@State(Scope.Thread)
-open class Problem3(
-    override val defaultKeyParam: Long = 600851475143L,
-    private val variant: Int = 0
-) : EulerProblem<Long, Long> {
+private const val DESCRIPTION = (
+    "The prime factors of 13195 are 5, 7, 13 and 29.\n\n" +
+    "What is the largest prime factor of the number 600851475143?"
+)
 
+private fun safeSqrt(n: Long): Long {
+    return sqrt(n.toDouble().nextUp()).nextUp().toLong()
+}
+
+@State(Scope.Thread)
+abstract class Problem3(
+    override val defaultKeyParam: Long = 600851475143L,
+) : EulerProblem<Long, Long> {
     override fun description(): String {
         return (
             "The prime factors of 13195 are 5, 7, 13 and 29.\n\n" +
-            "What is the largest prime factor of the number 600851475143?"
-        )
+                "What is the largest prime factor of the number 600851475143?"
+            )
     }
-
-    override fun explain(): String {
-        return when(variant) {
-            0 -> "Naive trial division"
-            1 -> "Eratosthenes sieve with wheel factorization"
-            2 -> "Hybrid Pollard Rho with Eratosthenes sieve"
-            else -> ""
-        }
-    }
-
     override fun validate(result: Number): Boolean {
         return result == 6857L
+    }
+}
+
+
+@State(Scope.Thread)
+open class Problem3a(
+    defaultKeyParam: Long = 600851475143L,
+) : Problem3(defaultKeyParam) {
+
+    override fun explain(): String {
+        return "Naive trial division"
     }
 
     @Benchmark
@@ -61,32 +69,6 @@ open class Problem3(
     }
 
     override fun run(keyParam: Long): Long {
-        return when(variant) {
-            0 -> naiveTrialDivision(keyParam)
-            1 -> eratSolution(keyParam)
-            2 -> hybridPollardRhoSolution(keyParam)
-            else -> naiveTrialDivision(keyParam)
-        }
-    }
-
-    private fun eratSolution(keyParam: Long): Long {
-        val primes = eratosthenesWithWheelFactorization(safeSqrt(keyParam))
-
-        for (i in primes.size - 1 downTo 0) {
-            val p = primes[i]
-            if (keyParam % p == 0L) {
-                return p
-            }
-        }
-
-        return keyParam
-    }
-
-    private fun hybridPollardRhoSolution(keyParam: Long): Long {
-        return pollardRhoEratosthenesPrimeFactors(keyParam).max()
-    }
-
-    private fun naiveTrialDivision(keyParam: Long): Long {
         var n = keyParam
         var maxFactor = 2L
         var f = 2L
@@ -105,8 +87,47 @@ open class Problem3(
         }
         return maxFactor
     }
+}
+@State(Scope.Thread)
+open class Problem3b(
+    defaultKeyParam: Long = 600851475143L,
+) : Problem3(defaultKeyParam) {
+    override fun explain(): String {
+        return "Eratosthenes sieve with wheel factorization"
+    }
 
-    private fun safeSqrt(n: Long): Long {
-        return sqrt(n.toDouble().nextUp()).nextUp().toLong()
+    @Benchmark
+    fun jmhBenchmark() {
+        run(defaultKeyParam)
+    }
+
+    override fun run(keyParam: Long): Long {
+        val primes = eratosthenesWithWheelFactorization(safeSqrt(keyParam))
+
+        for (i in primes.size - 1 downTo 0) {
+            val p = primes[i]
+            if (keyParam % p == 0L) {
+                return p
+            }
+        }
+
+        return keyParam
+    }
+}
+@State(Scope.Thread)
+open class Problem3c(
+    defaultKeyParam: Long = 600851475143L,
+) : Problem3(defaultKeyParam) {
+    override fun explain(): String {
+        return "Hybrid Pollard Rho with Eratosthenes sieve"
+    }
+
+    @Benchmark
+    fun jmhBenchmark() {
+        run(defaultKeyParam)
+    }
+
+    override fun run(keyParam: Long): Long {
+        return pollardRhoEratosthenesPrimeFactors(keyParam).max()
     }
 }

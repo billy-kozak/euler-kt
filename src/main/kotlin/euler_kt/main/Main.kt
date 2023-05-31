@@ -18,9 +18,7 @@
 package euler_kt.main
 
 import euler_kt.main.framework.*
-import euler_kt.main.problems.Problem1
-import euler_kt.main.problems.Problem2
-import euler_kt.main.problems.Problem3
+import euler_kt.main.problems.*
 import picocli.CommandLine
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +35,7 @@ fun main(args: Array<String>) {
     val problems: Map<Int, List<EulerProblem<*, *>>> = mapOf(
         Pair(1, listOf(Problem1())),
         Pair(2, listOf(Problem2())),
-        Pair(3, listOf(Problem3(variant=0), Problem3(variant=1), Problem3(variant=2)))
+        Pair(3, listOf(Problem3a(), Problem3b(), Problem3c()))
     )
     val progArgs = parseArgs(
         args,

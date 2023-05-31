@@ -45,7 +45,7 @@ class ProgArgs constructor(
     @Option(names=["-e", "--explain"], description=["Print explanation of how chosen solver works, before solving"])
     private var explain: Boolean = false
 
-    @Option(names=["--variant"], description=["Use the numbered solution variant instead of the default"])
+    @Option(names=["-s", "--solution"], description=["Use the numbered solution variant instead of the default"])
     private var variant: UInt = 0u
 
     @Option(names=["-a", "--all"], description=["Solve all implemented problems"])
