@@ -80,9 +80,26 @@ class Precompute private constructor() {
             7933, 7937, 7949, 7951, 7963, 7993, 8009, 8011, 8017, 8039, 8053, 8059, 8069, 8081, 8087, 8089, 8093, 8101,
             8111, 8117, 8123, 8147, 8161
         )
+        private val PRECOMPUTED_1024_SET: Set<Int> = PRECOMPUTED_1024_PRIMES.toSet()
 
         fun p1024(index: Int): Int {
             return PRECOMPUTED_1024_PRIMES[index]
+        }
+
+        fun isPrime1024(n: Int): Boolean {
+            return PRECOMPUTED_1024_SET.contains(n)
+        }
+
+        fun largestPrime1024(): Int {
+            return PRECOMPUTED_1024_PRIMES.last()
+        }
+
+        fun iterator(): Iterator<Int> {
+            return PRECOMPUTED_1024_PRIMES.iterator()
+        }
+
+        fun sequence(): Sequence<Int> {
+            return PRECOMPUTED_1024_PRIMES.asSequence()
         }
 
         fun startPrimeListFromPrecompute(): FunctionBackedGrowOnlyList<Long> {

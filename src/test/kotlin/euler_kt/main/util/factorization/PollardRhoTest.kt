@@ -16,22 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package euler_kt.main.framework
+package euler_kt.main.util.factorization
 
-interface EulerProblem <out T : Number, P : Number> {
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
 
-    val defaultKeyParam: P
-    fun description(): String
+class PollardRhoTest {
+    @Test
+    fun testSimple() {
 
-    fun validate(result: Number): Boolean
+        var factors = listOf(2L, 3L, 5L, 7L, 11L)
+        var n = factors.fold(1L, Long::times)
 
-    fun run(keyParam: P = defaultKeyParam): T
+        // This works, but is not a general solution as the initial parameters and number of each invocation were
+        // guess and tested
+        var r1 = pollardRhoFactorize(n)
+        var r2 = pollardRhoFactorize(r1, x0=2, g=::pollardRhoPolly1)
+        var r3 = pollardRhoFactorize(r2, x0=3, g=::pollardRhoPolly0)
 
-    fun explain(): String {
-        return "Project euler solver."
-    }
-
-    fun runVariant(variant: Int, keyParam: P = defaultKeyParam): T {
-        return run(keyParam)
+        assertContentEquals(factors, r3.sorted().toList())
     }
 }

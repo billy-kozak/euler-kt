@@ -54,6 +54,11 @@ fun eratosthenes(n: Long): List<Long> {
 fun eratosthenesWithPrecompute(n: Long): List<Long> {
     val primes = startPrimeListFromPrecompute()
     val maxPrime = primes.last()
+
+    if(n <= maxPrime) {
+        return primes
+    }
+
     val sieve = BijectionBooleanArray(
         n + 1
     ) { oddLongToNaturalInt(it - maxPrime + 1)}

@@ -22,35 +22,45 @@ import euler_kt.main.problems.Problem1
 import euler_kt.main.problems.Problem2
 import euler_kt.main.problems.Problem3
 import picocli.CommandLine
-import java.lang.AssertionError
 import java.util.concurrent.TimeUnit
+
+fun <T> List<T>.getOrThrow(index: Int, e: Throwable): T {
+    return this[index] ?: throw e
+}
+
+fun <K, V> Map<K, V>.getOrThrow(index: K, e: Throwable): V {
+    return this[index] ?: throw e
+}
 
 fun main(args: Array<String>) {
 
-    val problems: Map<Int, EulerProblem<*, *>> = mapOf(
-        Pair(1, Problem1()),
-        Pair(2, Problem2()),
-        Pair(3, Problem3())
+    val problems: Map<Int, List<EulerProblem<*, *>>> = mapOf(
+        Pair(1, listOf(Problem1())),
+        Pair(2, listOf(Problem2())),
+        Pair(3, listOf(Problem3(variant=0), Problem3(variant=1), Problem3(variant=2)))
     )
-    val progArgs = parseArgs(args, problems.keys)
+    val progArgs = parseArgs(
+        args,
+        { problem -> problem in problems},
+        { problem, variant -> (problems[problem]?.size ?: 0) > variant }
+    )
 
     val runBenchmark = createBenchmarkFunction(progArgs)
 
     if(progArgs.runAll()) {
-        problems.forEach {(problemNumber, problem) ->
+        problems.forEach {(problemNumber, solutions) ->
+            val problem = solutions.getOrThrow(0, AssertionError("Should not be possible"))
             val result = runBenchmark(problem, problemNumber)
             println(result)
         }
     } else {
         val problemNumber = progArgs.getProblem()
+        val solutionVariant = progArgs.getVariant().toInt()
+        val except = AssertionError("Should not be possible")
 
-        when(val problem = problems[problemNumber]) {
-            null -> throw AssertionError("Should not be possible")
-            else -> {
-                val result = runBenchmark(problem, problemNumber)
-                println(result)
-            }
-        }
+        val problem = problems.getOrThrow(problemNumber, except).getOrThrow(solutionVariant, except)
+        val result = runBenchmark(problem, problemNumber)
+        println(result)
     }
 }
 
@@ -95,21 +105,25 @@ private fun createBenchmarkFunction(args: ProgArgs): (EulerProblem<*, *>, Int) -
         }
 
     val runAndPrintDescription: (EulerProblem<*, *>, Int) -> ProblemResult =
-        if(args.printDescription()) {
-            { problem, problemNumber ->
+        {
+            problem, problemNumber ->
+            if(args.printDescription()) {
                 println(problem.description())
-                runHarness(problem, problemNumber)
             }
-        } else {
-            runHarness
+            if(args.printExplanation()) {
+                println(problem.explain())
+            }
+            runHarness(problem, problemNumber)
         }
 
     return runAndPrintDescription
 }
 
 
-private fun parseArgs(args: Array<String>, implementedProblems: Set<Int>): ProgArgs {
-    val progArgs = ProgArgs(implementedProblems)
+private fun parseArgs(
+    args: Array<String>, problemExists: (Int) -> Boolean, variantExists: (Int, Int) -> Boolean
+): ProgArgs {
+    val progArgs = ProgArgs(problemExists, variantExists)
     var cmd = CommandLine(progArgs)
 
     val exitCode = cmd.execute(*args)

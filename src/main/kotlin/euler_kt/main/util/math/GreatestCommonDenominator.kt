@@ -16,22 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package euler_kt.main.framework
+package euler_kt.main.util.math
 
-interface EulerProblem <out T : Number, P : Number> {
+fun euclidGCD(p1: Long, p2: Long): Long {
 
-    val defaultKeyParam: P
-    fun description(): String
+    var a = p1
+    var b = p2
 
-    fun validate(result: Number): Boolean
-
-    fun run(keyParam: P = defaultKeyParam): T
-
-    fun explain(): String {
-        return "Project euler solver."
+    while(b != 0L){
+        val temp = b
+        b = a % b
+        a = temp
     }
-
-    fun runVariant(variant: Int, keyParam: P = defaultKeyParam): T {
-        return run(keyParam)
-    }
+    return a
 }

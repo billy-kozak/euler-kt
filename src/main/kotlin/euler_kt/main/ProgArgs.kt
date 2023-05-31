@@ -28,7 +28,10 @@ import java.util.concurrent.Callable
     version=["euler-kt 1.0.0"],
     description=["Solve Project Euler problems in Kotlin"]
 )
-class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable<Int> {
+class ProgArgs constructor(
+    private val problemExists: (Int) -> Boolean,
+    private val variantExists: (Int, Int) -> Boolean,
+) : Callable<Int> {
 
     @Spec
     private lateinit var spec: CommandSpec
@@ -38,6 +41,12 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
 
     @Option(names=["-d", "--description"], description=["Print description before solving"])
     private var description: Boolean = false
+
+    @Option(names=["-e", "--explain"], description=["Print explanation of how chosen solver works, before solving"])
+    private var explain: Boolean = false
+
+    @Option(names=["--variant"], description=["Use the numbered solution variant instead of the default"])
+    private var variant: UInt = 0u
 
     @Option(names=["-a", "--all"], description=["Solve all implemented problems"])
     private var all: Boolean = false
@@ -127,8 +136,16 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
         return description;
     }
 
+    fun printExplanation(): Boolean {
+        return explain
+    }
+
     fun getProblem(): Int {
         return problem;
+    }
+
+    fun getVariant(): UInt {
+        return variant
     }
 
     fun runType(): RunType {
@@ -180,9 +197,15 @@ class ProgArgs constructor(private val implementedProblems: Set<Int>) : Callable
             )
         }
 
-        if(!implementedProblems.contains(problem)) {
+        if(!problemExists(problem)) {
             throw ParameterException(
                 spec.commandLine(), "Invalid value for option --problem. Problem $problem is not implemented."
+            )
+        }
+        if(!variantExists(problem, variant.toInt())) {
+            throw ParameterException(
+                spec.commandLine(),
+                "Invalid value for option --variant. Variant $variant does not exist for problem $problem."
             )
         }
     }
