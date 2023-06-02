@@ -104,7 +104,7 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
     ) { oddLongToNaturalInt(it - maxPrime + 1)}
 
     if(n < 2) {
-        return listOf()
+        return primes
     }
 
     for(i in 1 until primes.size) {
