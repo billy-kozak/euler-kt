@@ -103,10 +103,6 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
         n + 1
     ) { oddLongToNaturalInt(it - maxPrime + 1)}
 
-    if(n < 2) {
-        return primes
-    }
-
     for(i in 1 until primes.size) {
         val p = primes[i]
         var nextMultiple = ((maxPrime / p) + 1) * p
