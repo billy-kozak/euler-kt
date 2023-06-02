@@ -34,4 +34,16 @@ class EratosthenesTest {
             wheel
         )
     }
+
+    @Test
+    fun testEratWithPrecompute() {
+        val max = Precompute.largestPrime1024().toLong() * 10
+        val wheel = eratosthenesWithWheelFactorization(max)
+        val withPrecompute = eratosthenesWithPrecompute(max)
+
+        assertContentEquals(
+            wheel,
+            withPrecompute
+        )
+    }
 }

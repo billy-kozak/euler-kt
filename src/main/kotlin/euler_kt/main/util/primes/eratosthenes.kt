@@ -21,6 +21,7 @@ package euler_kt.main.util.primes
 import euler_kt.main.util.functions.oddLongToNaturalInt
 import euler_kt.main.util.primes.Precompute.Companion.startPrimeListFromPrecompute
 import euler_kt.main.util.structures.BijectionBooleanArray
+import euler_kt.main.util.structures.FunctionBackedGrowOnlyList
 import java.lang.Long.max
 
 private val WHEEL_INCREMENTS: List<Int> = listOf(
@@ -51,8 +52,47 @@ fun eratosthenes(n: Long): List<Long> {
     return primes
 }
 
+fun eratosthenesWithWheelFactorization(n: Long): List<Long> {
+
+    val primes = mutableListOf<Long>()
+
+    // save space, by building a mark list which is only valid for the "spokes" of the wheel factorization algorithm
+    val sieve = BijectionBooleanArray(
+        (((n / 30) + 1) * 30) + 1, ::wheelFactorizationBijectionFunction
+    )
+
+    for(i in arrayOf(2, 3, 5)) {
+        if(i <= n) {
+            primes.add(i.toLong())
+        }
+    }
+
+    var i = 7L
+    var incIdx = 0
+
+    while(i <= n) {
+        if(!sieve[i]) {
+            primes.add(i)
+            var j = i * i
+            while(j <= n) {
+                sieve[j] = true
+                j += i * 2
+            }
+        }
+        i += WHEEL_INCREMENTS[incIdx]
+        incIdx = (incIdx + 1) % WHEEL_INCREMENTS.size
+    }
+
+    return primes
+}
+
+fun eratosthenesWithPrecompute(n: Long, primes: List<Long>): List<Long> {
+    return  eratosthenesWithPrecompute(n, FunctionBackedGrowOnlyList(primes.size){primes[it]})
+}
 fun eratosthenesWithPrecompute(n: Long): List<Long> {
-    val primes = startPrimeListFromPrecompute()
+    return  eratosthenesWithPrecompute(n, startPrimeListFromPrecompute())
+}
+private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyList<Long>): List<Long> {
     val maxPrime = primes.last()
 
     if(n <= maxPrime) {
@@ -81,37 +121,10 @@ fun eratosthenesWithPrecompute(n: Long): List<Long> {
         }
     }
 
-    for(i in maxPrime + 2..n step 2) {
-        if(!sieve[i]) {
-            primes.add(i)
-            var j = i * i
-            while(j <= n) {
-                sieve[j] = true
-                j += i * 2
-            }
-        }
-    }
+    var incIdx = (primes.size - 1) % WHEEL_INCREMENTS.size
+    var i = maxPrime + WHEEL_INCREMENTS[incIdx]
 
-    return primes
-}
-
-fun eratosthenesWithWheelFactorization(n: Long): List<Long> {
-
-    val primes = mutableListOf<Long>()
-
-    // save space, by building a mark list which is only valid for the "spokes" of the wheel factorization algorithm
-    val sieve = BijectionBooleanArray(
-        (((n / 30) + 1) * 30) + 1, ::wheelFactorizationBijectionFunction
-    )
-
-    for(i in arrayOf(2, 3, 5)) {
-        if(i <= n) {
-            primes.add(i.toLong())
-        }
-    }
-
-    var i = 7L
-    var incIdx = 0
+    incIdx = (incIdx + 1) % WHEEL_INCREMENTS.size
 
     while(i <= n) {
         if(!sieve[i]) {
