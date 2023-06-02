@@ -97,7 +97,7 @@ fun eratosthenesWithPrecompute(n: Long): List<Long> {
 
 fun eratosthenesWithWheelFactorization(n: Long): List<Long> {
 
-    val primes = mutableListOf<Long>(2)
+    val primes = mutableListOf<Long>()
 
     // save space, by building a mark list which is only valid for the "spokes" of the wheel factorization algorithm
     val sieve = BijectionBooleanArray(
