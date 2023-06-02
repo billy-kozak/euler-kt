@@ -35,7 +35,8 @@ fun main(args: Array<String>) {
     val problems: Map<Int, List<EulerProblem<*, *>>> = mapOf(
         Pair(1, listOf(Problem1())),
         Pair(2, listOf(Problem2())),
-        Pair(3, listOf(Problem3a(), Problem3b(), Problem3c()))
+        Pair(3, listOf(Problem3a(), Problem3b(), Problem3c(), Problem3d())),
+        Pair(4, listOf(Problem4())),
     )
     val progArgs = parseArgs(
         args,

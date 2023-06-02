@@ -20,6 +20,7 @@ package euler_kt.main.problems
 
 import euler_kt.main.framework.EulerProblem
 import euler_kt.main.util.factorization.pollardRhoEratosthenesPrimeFactors
+import euler_kt.main.util.primes.Precompute
 import euler_kt.main.util.primes.eratosthenes
 import euler_kt.main.util.primes.eratosthenesWithPrecompute
 import euler_kt.main.util.primes.eratosthenesWithWheelFactorization
@@ -129,5 +130,53 @@ open class Problem3c(
 
     override fun run(keyParam: Long): Long {
         return pollardRhoEratosthenesPrimeFactors(keyParam).max()
+    }
+}
+
+@State(Scope.Thread)
+open class Problem3d(
+    defaultKeyParam: Long = 600851475143L,
+) : Problem3(defaultKeyParam) {
+    override fun explain(): String {
+        return "Trial division with precompute starting point"
+    }
+
+    @Benchmark
+    fun jmhBenchmark() {
+        run(defaultKeyParam)
+    }
+
+    override fun run(keyParam: Long): Long {
+        var n = keyParam
+        var maxPrime = 2L
+        for(p in Precompute.iterator()) {
+            if((n % p) == 0L) {
+                if(p > maxPrime) {
+                    maxPrime = p.toLong()
+                }
+                do {
+                    n = n / p
+                } while((n % p) == 0L)
+            }
+            if(n == 1L) {
+                break
+            }
+        }
+
+        var d = (Precompute.largestPrime1024() + 2).toLong()
+
+        while(n != 1L) {
+            if((n % d) == 0L) {
+                if(d > maxPrime) {
+                    maxPrime = d
+                }
+                do {
+                    n = n / d
+                } while((n % d) == 0L)
+            }
+            d += 2
+        }
+
+        return maxPrime
     }
 }
