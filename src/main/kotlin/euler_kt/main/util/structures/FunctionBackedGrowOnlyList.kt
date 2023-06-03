@@ -18,7 +18,7 @@
 
 package euler_kt.main.util.structures
 
-class FunctionBackedGrowOnlyList<T>(private val funcMax: Int, private inline val func: (Int) -> T) : List<T> {
+class FunctionBackedGrowOnlyList<T>(private val funcMax: Int, private inline val func: (Int) -> T) : GrowOnlyList<T> {
 
     private val extension = mutableListOf<T>()
 
@@ -137,7 +137,7 @@ class FunctionBackedGrowOnlyList<T>(private val funcMax: Int, private inline val
         return extension.contains(element)
     }
 
-    fun add(element: T) {
+    override fun add(element: T) {
         extension.add(element)
     }
 }

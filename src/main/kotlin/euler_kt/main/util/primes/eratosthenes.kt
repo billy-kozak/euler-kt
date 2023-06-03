@@ -22,7 +22,6 @@ import euler_kt.main.util.functions.oddLongToNaturalInt
 import euler_kt.main.util.primes.Precompute.Companion.startPrimeListFromPrecompute
 import euler_kt.main.util.structures.BijectionBooleanArray
 import euler_kt.main.util.structures.FunctionBackedGrowOnlyList
-import java.lang.Long.max
 
 private val WHEEL_INCREMENTS: List<Int> = listOf(
     4, 2, 4, 2, 4, 6, 2, 6
@@ -92,6 +91,7 @@ fun eratosthenesWithPrecompute(n: Long, primes: List<Long>): List<Long> {
 fun eratosthenesWithPrecompute(n: Long): List<Long> {
     return  eratosthenesWithPrecompute(n, startPrimeListFromPrecompute())
 }
+
 private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyList<Long>): List<Long> {
     val maxPrime = primes.last()
 
@@ -100,8 +100,13 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
     }
 
     val sieve = BijectionBooleanArray(
-        n + 1
-    ) { oddLongToNaturalInt(it - maxPrime + 1)}
+        (((n / 30) + 1) * 30) + 1
+    ) {
+        when(val idx = wheelFactorizationBijectionFunction(it)) {
+            0 -> 0
+            else -> idx - wheelFactorizationBijectionFunction(maxPrime) + 1
+        }
+    }
 
     for(i in 1 until primes.size) {
         val p = primes[i]
@@ -109,7 +114,7 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
         if(nextMultiple % 2 == 0L) {
             nextMultiple += p
         }
-        var j = max(nextMultiple, p * p)
+        var j = nextMultiple.coerceAtLeast(p * p)
 
         while(j <= n) {
             sieve[j] = true
@@ -117,7 +122,7 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
         }
     }
 
-    var incIdx = (primes.size - 1) % WHEEL_INCREMENTS.size
+    var incIdx = wheelIndex(maxPrime)
     var i = maxPrime + WHEEL_INCREMENTS[incIdx]
 
     incIdx = (incIdx + 1) % WHEEL_INCREMENTS.size
@@ -136,32 +141,4 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
     }
 
     return primes
-}
-
-private fun wheelFactorizationBijectionFunction(v: Long): Int {
-
-    when(v) {
-        2L -> return 0
-        3L -> return 1
-        5L -> return 3
-    }
-
-    val div = v / 30
-    val mod = v % 30
-
-    when(mod) {
-        7L -> return (div * 8 + 3).toInt()
-        11L -> return (div * 8 + 4).toInt()
-        13L -> return (div * 8 + 5).toInt()
-        17L -> return (div * 8 + 6).toInt()
-        19L -> return (div * 8 + 7).toInt()
-        23L -> return (div * 8 + 8).toInt()
-        29L -> return (div * 8 + 9).toInt()
-        1L -> return ((div * 8 + 10).toInt())
-    }
-
-    // We can't avoid these lookups in the wheel factorization algorithm, but we also don't care about the
-    // result, so we resolve to a valid index which we also don't care about. Since the algorithm never needs to
-    // do a lookup for '2', we can use that as a placeholder.
-    return 0
 }

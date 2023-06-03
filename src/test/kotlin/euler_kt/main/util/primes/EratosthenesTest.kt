@@ -46,4 +46,17 @@ class EratosthenesTest {
             withPrecompute
         )
     }
+
+    @Test
+    fun testEratosthenesSequenceNoPrecompute() {
+        val sequence = EratosthenesSequence(Precompute.largestPrime1024().toLong())
+        assertContentEquals(Precompute.startPrimeListFromPrecompute(), sequence.take(1024).toList())
+    }
+
+    @Test
+    fun testEratosthenesSequenceExtension() {
+        val expected = eratosthenesWithWheelFactorization(Precompute.largestPrime1024().toLong() * 2)
+        val sequence = EratosthenesSequence(Precompute.largestPrime1024().toLong())
+        assertContentEquals(expected, sequence.take(expected.size).toList())
+    }
 }
