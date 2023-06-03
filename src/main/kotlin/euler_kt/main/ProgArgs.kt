@@ -109,6 +109,14 @@ class ProgArgs constructor(
         )
         private var throughput: Boolean = false
 
+        @Option(
+            names=["-l", "--list"],
+            description=[
+                "List all available problems and variants. Does not run any problems."
+            ]
+        )
+        private var list: Boolean = false
+
         fun runType(): RunType {
             if(validate) {
                 return RunType.VALIDATE
@@ -118,6 +126,8 @@ class ProgArgs constructor(
                 return RunType.JMH_BENCHMARK
             } else if(throughput) {
                 return RunType.THROUGHPUT
+            } else if(list) {
+                return RunType.LIST
             } else {
                 throw IllegalStateException("Invalid run type");
             }
@@ -125,7 +135,7 @@ class ProgArgs constructor(
     }
 
     enum class RunType {
-        VALIDATE, BENCHMARK, JMH_BENCHMARK, THROUGHPUT
+        VALIDATE, BENCHMARK, JMH_BENCHMARK, THROUGHPUT, LIST
     }
 
     fun measurementTime(): Long {
@@ -179,7 +189,7 @@ class ProgArgs constructor(
     override fun call(): Int {
         validate();
 
-        if(!all && problem == 0) {
+        if(!(runType() == RunType.LIST) && !all && problem == 0) {
             System.err.println("No problem specified. Use --help for usage information.")
             return 255;
         }

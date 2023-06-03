@@ -19,6 +19,7 @@ package euler_kt.main
 
 import euler_kt.main.framework.*
 import euler_kt.main.problems.*
+import euler_kt.main.util.io.printIndented
 import picocli.CommandLine
 import java.util.concurrent.TimeUnit
 
@@ -54,6 +55,16 @@ fun main(args: Array<String>) {
             val problem = solutions.getOrThrow(0, AssertionError("Should not be possible"))
             val result = runBenchmark(problem, problemNumber)
             println(result)
+        }
+    } else if(progArgs.runType() == ProgArgs.RunType.LIST) {
+        problems.forEach {(problemNumber, solutions) ->
+            println("Problem $problemNumber:\n")
+            printIndented(4, solutions[0].description())
+            println()
+            solutions.forEachIndexed { index, solution ->
+                println("      Solution $index: ${solution.explain()}")
+            }
+            println()
         }
     } else {
         val problemNumber = progArgs.getProblem()
