@@ -61,8 +61,6 @@ class Problem9 (
         }
         val c = keyParam - a - b
 
-        println("a = $a, b = $b, c = $c")
-
         return a * b * c
     }
 
