@@ -18,6 +18,8 @@
 
 package euler_kt.main.util.math
 
+import kotlin.math.nextUp
+
 class IntegerMath private constructor() {
 
     companion object {
@@ -95,5 +97,35 @@ class IntegerMath private constructor() {
 
             return (n % high) / low
         }
+
+        fun sqrt(n: Int): Int {
+            /* There are faster known algorithms for 32bit integer square roots, but I don't feel like implementing
+            * now, considering the problems I've worked on so far wouldn't benefit much from this optimization */
+            return kotlin.math.sqrt(n.toDouble()).toInt()
+        }
+        fun sqrt(n: Long): Long {
+            /* Slow for large numbers, but effectively deals with the precision loss in large long to double
+            conversion */
+            /* May need a faster algorithm eventually, but at the moment no problem asks for square root of
+            * a large integer (which is still less tan 63 bits in size) */
+            val d = n.toDouble()
+            var sr = kotlin.math.sqrt(d).toLong()
+
+            while((sr + 1) * (sr + 1) < d) {
+                sr += 1
+            }
+            return sr
+        }
+
+        fun isPerfectSquare(n: Int): Boolean {
+            val sr = sqrt(n)
+            return sr * sr == n
+        }
+
+        fun divMod(dividend: Int, divisor: Int): DivMod<Int> {
+            return DivMod(dividend / divisor, dividend % divisor)
+        }
+
+        data class DivMod<T: Number>(val div: T, val mod: T)
     }
 }
