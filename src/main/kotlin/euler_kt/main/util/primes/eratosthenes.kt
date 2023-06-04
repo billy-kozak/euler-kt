@@ -142,3 +142,32 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
 
     return primes
 }
+
+fun eratosthenesSequence(n: Long) = sequence {
+    // save space, by building a mark list which is only valid for the "spokes" of the wheel factorization algorithm
+    val sieve = BijectionBooleanArray(
+        (((n / 30) + 1) * 30) + 1, ::wheelFactorizationBijectionFunction
+    )
+
+    for(i in arrayOf(2L, 3L, 5L)) {
+        if(i <= n) {
+            yield(i)
+        }
+    }
+
+    var i = 7L
+    var incIdx = 0
+
+    while(i <= n) {
+        if(!sieve[i]) {
+            yield(i)
+            var j = i * i
+            while(j <= n) {
+                sieve[j] = true
+                j += i * 2
+            }
+        }
+        i += WHEEL_INCREMENTS[incIdx]
+        incIdx = (incIdx + 1) % WHEEL_INCREMENTS.size
+    }
+}

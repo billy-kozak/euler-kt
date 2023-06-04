@@ -28,7 +28,7 @@ private val WHEEL_INCREMENTS: List<Int> = listOf(
     4, 2, 4, 2, 4, 6, 2, 6
 )
 
-class EratosthenesSequence constructor(
+class InfiniteEratosthenesSequence constructor(
     private val maxPrime0: Long,
     private val knownPrimes: GrowOnlyList<Long>
 ) : Sequence<Long> {

@@ -19,7 +19,7 @@
 package euler_kt.main.problems
 
 import euler_kt.main.framework.EulerProblem
-import euler_kt.main.util.primes.EratosthenesSequence
+import euler_kt.main.util.primes.InfiniteEratosthenesSequence
 import euler_kt.main.util.primes.Precompute
 import euler_kt.main.util.primes.primeNumberTheoremApproximateNthPrime
 
@@ -49,7 +49,7 @@ class Problem7a(
 
     override fun run(keyParam: Int): Long {
         val approximatePrimeVal = primeNumberTheoremApproximateNthPrime(keyParam) * 2
-        val sequence = EratosthenesSequence(approximatePrimeVal)
+        val sequence = InfiniteEratosthenesSequence(approximatePrimeVal)
         return sequence.take(keyParam).last()
     }
 }
@@ -64,7 +64,7 @@ class Problem7b(
 
     override fun run(keyParam: Int): Long {
         val approximatePrimeVal = primeNumberTheoremApproximateNthPrime(keyParam) * 2
-        val sequence = EratosthenesSequence(approximatePrimeVal, Precompute.startPrimeListFromPrecompute())
+        val sequence = InfiniteEratosthenesSequence(approximatePrimeVal, Precompute.startPrimeListFromPrecompute())
         return sequence.take(keyParam).last()
     }
 }
