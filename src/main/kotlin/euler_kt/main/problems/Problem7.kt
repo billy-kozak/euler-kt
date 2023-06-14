@@ -64,7 +64,7 @@ class Problem7b(
 
     override fun run(keyParam: Int): Long {
         val approximatePrimeVal = primeNumberTheoremApproximateNthPrime(keyParam) * 2
-        val sequence = InfiniteEratosthenesSequence(approximatePrimeVal, Precompute.startPrimeListFromPrecompute())
+        val sequence = InfiniteEratosthenesSequence(Precompute.startPrimeListFromPrecompute(), approximatePrimeVal)
         return sequence.take(keyParam).last()
     }
 }

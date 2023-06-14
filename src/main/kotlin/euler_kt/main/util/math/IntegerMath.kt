@@ -60,6 +60,8 @@ class IntegerMath private constructor() {
             }
             if(e == 0L) {
                 return 1
+            } else if(e == 1L) {
+                return b
             }
 
             var r = b
@@ -88,6 +90,34 @@ class IntegerMath private constructor() {
                 maxPow10
             } else {
                 maxPow10 - 1
+            }
+        }
+
+        fun log2Floor(n: Long): Long {
+            return 63L - n.countLeadingZeroBits()
+        }
+
+        fun log2Floor(n: Int): Int {
+            return 31 - n.countLeadingZeroBits()
+        }
+
+        fun log2Ciel(n: Int): Int {
+            val floor = log2Floor(n)
+
+            if((1 shl floor) == n) {
+                return floor
+            } else {
+                return floor + 1
+            }
+        }
+
+        fun log2Ciel(n: Long): Long {
+            val floor = log2Floor(n)
+
+            if((1L shl floor.toInt()) == n) {
+                return floor
+            } else {
+                return floor + 1
             }
         }
 

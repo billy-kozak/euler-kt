@@ -23,21 +23,21 @@ import euler_kt.main.util.structures.FunctionBackedGrowOnlyList
 import euler_kt.main.util.structures.GrowOnlyArrayList
 import euler_kt.main.util.structures.GrowOnlyList
 
-private const val DEFAULT_MAX_PRIME_ZERO = 1000000L
+const val DEFAULT_MAX_PRIME_ZERO = 1000000L
 private val WHEEL_INCREMENTS: List<Int> = listOf(
     4, 2, 4, 2, 4, 6, 2, 6
 )
 
 class InfiniteEratosthenesSequence constructor(
-    private val maxPrime0: Long,
-    private val knownPrimes: GrowOnlyList<Long>
+    val knownPrimes: GrowOnlyList<Long>,
+    private val maxPrime0: Long = DEFAULT_MAX_PRIME_ZERO,
 ) : Sequence<Long> {
 
-    public constructor(maxPrime0: Long =DEFAULT_MAX_PRIME_ZERO) : this(maxPrime0, GrowOnlyArrayList())
+    public constructor(maxPrime0: Long =DEFAULT_MAX_PRIME_ZERO) : this(GrowOnlyArrayList(), maxPrime0)
 
     public constructor(
         precompute: (Int) -> Long, precomputeSize: Int, maxPrime0: Long = DEFAULT_MAX_PRIME_ZERO
-    ) : this(maxPrime0, FunctionBackedGrowOnlyList(precomputeSize, precompute))
+    ) : this(FunctionBackedGrowOnlyList(precomputeSize, precompute), maxPrime0)
 
     private val eratosthenes: suspend SequenceScope<Long>.(n: Long) -> Unit = { n ->
         // save space, by building a mark list which is only valid for the "spokes" of the wheel factorization algorithm
