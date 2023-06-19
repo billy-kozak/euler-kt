@@ -23,10 +23,10 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class FibbonacciHeapTest {
+class FibonacciHeapTest {
     @Test
     fun testAlreadySorted() {
-        val heap = FibbonacciHeap<Int>()
+        val heap = FibonacciHeap<Int>()
 
         heap.add(1)
         heap.add(2)
@@ -48,7 +48,7 @@ class FibbonacciHeapTest {
 
     @Test
     fun testBasicPriorityQueueFunctionality() {
-        val heap = FibbonacciHeap<Int>()
+        val heap = FibonacciHeap<Int>()
 
         val elements = listOf(5, 4, 3, 2, 1, 7, 0, -3, 12, 107, 123, 54)
         heap.addAll(elements)
@@ -63,7 +63,7 @@ class FibbonacciHeapTest {
 
     @Test
     fun testDecreaseKey() {
-        val heap = FibbonacciHeap<Int>()
+        val heap = FibonacciHeap<Int>()
 
         val inputVector = mutableListOf(5, 4, 3, 2, 1, 7, 0, -3, 12, 107, 123, 54)
         heap.addAll(inputVector)
@@ -85,7 +85,7 @@ class FibbonacciHeapTest {
 
     @Test
     fun testIncreaseKey() {
-        val heap = FibbonacciHeap<Int>()
+        val heap = FibonacciHeap<Int>()
 
         val inputVector = mutableListOf(5, 4, 3, 2, 1, 7, 0, -3, 12, 107, 123, 54)
         heap.addAll(inputVector)
@@ -107,7 +107,7 @@ class FibbonacciHeapTest {
 
     @Test
     fun testPushPopPushPop() {
-        val heap = FibbonacciHeap<Int>()
+        val heap = FibonacciHeap<Int>()
 
         heap.add(5)
         heap.add(2)

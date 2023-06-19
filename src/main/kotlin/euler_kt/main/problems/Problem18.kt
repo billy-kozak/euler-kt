@@ -20,7 +20,7 @@ package euler_kt.main.problems
 
 import euler_kt.main.framework.EulerProblem
 import euler_kt.main.util.strings.triangularize
-import euler_kt.main.util.structures.FibbonacciHeap
+import euler_kt.main.util.structures.FibonacciHeap
 import euler_kt.main.util.structures.MinHeap
 
 private const val MAGIC_STRING: String = (
@@ -91,7 +91,7 @@ class Problem18(override val defaultKeyParam: Int = 1) : EulerProblem<Int, Int> 
 
     override fun run(keyParam: Int): Int {
         var maxPath = -1
-        val q = FibbonacciHeap<DijkstraNode>()
+        val q = FibonacciHeap<DijkstraNode>()
         val heapNodeMatrix = mutableListOf<MutableList<MinHeap.HeapNode<DijkstraNode>?>>()
 
         heapNodeMatrix.add(mutableListOf(q.push(DijkstraNode(Vertex(triangle[0][0], 0, 0), triangle[0][0]))))

@@ -21,9 +21,9 @@ package euler_kt.main.util.structures
 import euler_kt.main.util.coroutines.RecursiveSequence
 import java.util.*
 
-class FibbonacciHeap<T: Comparable<T>> private constructor(
-    private val roots: MutableList<FibbonacciHeap<T>.FibNode>,
-    private var minimum: FibbonacciHeap<T>.FibNode? = null,
+class FibonacciHeap<T: Comparable<T>> private constructor(
+    private val roots: MutableList<FibonacciHeap<T>.FibNode>,
+    private var minimum: FibonacciHeap<T>.FibNode? = null,
     private var numNodes: Int = 0
 ): MinHeap<T>  {
 
@@ -35,7 +35,7 @@ class FibbonacciHeap<T: Comparable<T>> private constructor(
      * @param other The other heap to merge with this one.
      * @return The merged heap.
      */
-    fun merge(other: FibbonacciHeap<T>): FibbonacciHeap<T> {
+    fun merge(other: FibonacciHeap<T>): FibonacciHeap<T> {
         val newRoots = mutableListOf<FibNode>()
 
         newRoots.addAll(roots)
@@ -55,7 +55,7 @@ class FibbonacciHeap<T: Comparable<T>> private constructor(
         clear()
         other.clear()
 
-        return FibbonacciHeap(newRoots, newMinimum, newNumNodes)
+        return FibonacciHeap(newRoots, newMinimum, newNumNodes)
     }
 
     override fun containsAll(elements: Collection<T>): Boolean {
