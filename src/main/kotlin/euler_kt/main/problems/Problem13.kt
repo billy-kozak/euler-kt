@@ -125,7 +125,7 @@ private const val MAGIC_STRING = (
     "53503534226472524250874054075591789781264330331690"
 )
 
-fun parseMagicString(): List<String> {
+private fun parseMagicString(): List<String> {
     return MAGIC_STRING.split("\n")
 }
 

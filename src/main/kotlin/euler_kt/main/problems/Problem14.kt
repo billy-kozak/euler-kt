@@ -24,8 +24,6 @@ import euler_kt.main.framework.EulerProblem
 
 abstract class Problem14(override val defaultKeyParam: Long = 1000000L): EulerProblem<Long, Long> {
 
-    protected val problemNumbers = parseMagicString()
-
     override fun description(): String {
         return """
             The following iterative sequence is defined for the set of positive integers:
