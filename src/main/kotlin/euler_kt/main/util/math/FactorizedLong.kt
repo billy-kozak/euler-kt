@@ -18,6 +18,8 @@
 
 package euler_kt.main.util.math
 
+import java.math.BigInteger
+
 class LongFactor(val factor: Long, val exponent: Long = 1L) {
     override fun toString(): String {
         if(exponent == 1L) {
@@ -114,6 +116,42 @@ class FactorizedLong: Iterable<LongFactor> {
         return FactorizedLong(primeFactors)
     }
 
+    operator fun times(other: FactorizedLong): FactorizedLong {
+        val newFactors = mutableListOf<LongFactor>()
+        var i = 0
+        var j = 0
+
+        while(i < factors.size && j < other.factors.size) {
+            val f1 = factors[i]
+            val f2 = other.factors[j]
+            if(f1.factor == f2.factor) {
+                newFactors.add(LongFactor(f1.factor, f1.exponent + f2.exponent))
+                i += 1
+                j += 1
+            } else if(f1.factor > f2.factor) {
+                newFactors.add(f2)
+                j += 1
+            } else {
+                newFactors.add(f1)
+                i += 1
+            }
+        }
+
+        if(i != factors.size) {
+            while(i < factors.size) {
+                newFactors.add(factors[i])
+                i += 1
+            }
+        } else if(j != other.factors.size) {
+            while(j < other.factors.size) {
+                newFactors.add(other.factors[j])
+                j += 1
+            }
+        }
+
+        return FactorizedLong(newFactors)
+    }
+
     operator fun div(other: Long): FactorizedLong {
 
         fun copyAWithReduction(idx: Int): FactorizedLong {
@@ -152,5 +190,15 @@ class FactorizedLong: Iterable<LongFactor> {
             }
         }
         return FactorizedLong(primeFactors)
+    }
+
+    fun toBigInt(): BigInteger {
+        var ret = BigInteger.valueOf(1L)
+        for(factor in factors) {
+            val bigFactor = BigInteger.valueOf(factor.factor).pow(factor.exponent.toInt())
+            ret *= bigFactor
+        }
+
+        return ret
     }
 }
