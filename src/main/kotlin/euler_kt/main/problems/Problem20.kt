@@ -19,6 +19,7 @@
 package euler_kt.main.problems
 
 import euler_kt.main.framework.EulerProblem
+import euler_kt.main.util.factorization.factorizeAllUpTo
 import euler_kt.main.util.math.FactorizedLong
 import euler_kt.main.util.math.LongFactor
 import euler_kt.main.util.primes.Precompute
@@ -41,8 +42,7 @@ class Problem20(override val defaultKeyParam: Int = 100) : EulerProblem<Int, Int
     }
 
     override fun run(keyParam: Int): Int {
-        val factorizedUpToN = factorizedNumbers(keyParam)
-
+        val factorizedUpToN = factorizeAllUpTo(keyParam).subList(2, keyParam + 1)
         var factorizedFactorial = factorizedUpToN.reduce{a, b -> a * b}
 
         /* we know that all prime factors up to n occur at least once. Therefore, 2 will be first factor and
@@ -66,47 +66,5 @@ class Problem20(override val defaultKeyParam: Int = 100) : EulerProblem<Int, Int
         factorizedFactorial = FactorizedLong(factors)
 
         return factorizedFactorial.toBigInt().toString().map{it - '0'}.sum()
-    }
-
-    @Suppress("unchecked_cast")
-    private fun factorizedNumbers(n: Int): List<FactorizedLong> {
-        val primes = if(n < Precompute.largestPrime1024()) {
-            Precompute.startPrimeListFromPrecompute()
-        } else {
-            eratosthenesWithWheelFactorization(n.toLong())
-        }
-        val arr = arrayOfNulls<FactorizedLong>(n + 1)
-
-        arr[0] = FactorizedLong(0)
-        arr[1] = FactorizedLong(1)
-
-        for(i in primes.indices) {
-            val p = primes[i]
-            if(p > n) {
-                break
-            }
-            arr[p.toInt()] = FactorizedLong(p)
-        }
-
-        fun recursiveFactorize(i: Int): FactorizedLong {
-            val r = arr[i]
-            if(r != null) {
-                return r
-            }
-            for(p in primes) {
-                if(i % p == 0L) {
-                    val f = FactorizedLong(p) * recursiveFactorize(i / p.toInt())
-                    arr[i] = f
-                    return f
-                }
-            }
-            throw AssertionError("Factorization of $i not available")
-        }
-
-        for(i in n downTo 2) {
-            recursiveFactorize(i)
-        }
-
-        return arr.asList().subList(2, arr.size) as List<FactorizedLong>
     }
 }

@@ -41,7 +41,7 @@ private fun factorMaxima(primorialLow: FactorizedLong, primorialHigh: Factorized
         var powersProduct = 1L
         for(f in factors) {
             if(f.exponent > 1) {
-                powersProduct *= IntegerMath.pow(f.factor, f.exponent - 1)
+                powersProduct *= IntegerMath.pow(f.factor, f.exponent.toInt() - 1)
             }
         }
         return powersProduct >= primeHigh
@@ -129,7 +129,7 @@ fun factorByTrialDiv(n: Long, prmies: List<Long>): FactorizedLong {
                 exponent++
                 remaining /= prime
             }
-            factors.add(LongFactor(prime, exponent.toLong()))
+            factors.add(LongFactor(prime, exponent))
         }
         idx++
     }

@@ -18,11 +18,12 @@
 
 package euler_kt.main.util.math
 
+import euler_kt.main.util.coroutines.RecursiveSequence
 import java.math.BigInteger
 
-class LongFactor(val factor: Long, val exponent: Long = 1L) {
+class LongFactor(val factor: Long, val exponent: Int = 1) {
     override fun toString(): String {
-        if(exponent == 1L) {
+        if(exponent == 1) {
              return factor.toString()
         } else {
             return "$factor^$exponent"
@@ -61,6 +62,41 @@ class FactorizedLong: Iterable<LongFactor> {
         }
 
         return n
+    }
+
+    fun sumAllFactors(): Long {
+        var s = 1L
+        for(factor in factors) {
+            s *= (IntegerMath.pow(factor.factor, factor.exponent + 1) - 1) / (factor.factor - 1)
+        }
+        return s
+    }
+
+    fun sumAllProperFactors(): Long {
+        var s = 1L
+        for(factor in factors) {
+            s *= (IntegerMath.pow(factor.factor, factor.exponent + 1) - 1) / (factor.factor - 1)
+        }
+        return s - value
+    }
+
+    fun allFactors(): Sequence<Long> {
+        return RecursiveSequence(Pair(1L, factors.size - 1)) { args ->
+            var n = args.first
+            val idx = args.second
+
+            if(idx > 0) {
+                for (exp in 0..factors[idx].exponent) {
+                    callRecursive(Pair(n, idx - 1))
+                    n *= factors[idx].factor
+                }
+            } else {
+                for (exp in 0..factors[idx].exponent) {
+                    emit(n)
+                    n *= factors[idx].factor
+                }
+            }
+        }
     }
 
     override fun iterator(): Iterator<LongFactor> {
@@ -165,13 +201,13 @@ class FactorizedLong: Iterable<LongFactor> {
         }
 
         if(factors[0].factor == other) {
-            return if(factors[0].exponent == 1L) {
+            return if(factors[0].exponent == 1) {
                 FactorizedLong(factors.subList(1, factors.size))
             } else {
                 copyAWithReduction(0)
             }
         } else if(factors.last().factor == other){
-            return if(factors.last().exponent == 1L) {
+            return if(factors.last().exponent == 1) {
                 FactorizedLong(factors.subList(0, factors.size - 1))
             } else {
                 copyAWithReduction(factors.size - 1)

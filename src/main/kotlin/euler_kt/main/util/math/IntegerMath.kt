@@ -30,52 +30,53 @@ class IntegerMath private constructor() {
         )
 
         fun pow(b: Int,  e: Int): Int {
-
             if(e < 0) {
                 throw IllegalArgumentException("Exponent must be non-negative")
             }
-            if(e == 0) {
-                return 1
-            } else if(e == 1) {
-                return b
-            }
+            var expLeft = e
 
-            var r = b
-            var p = e
-
-            while(p >= 2) {
-                r *= r
-                p -= 2
+            fun rec(currentPow: Int, currentExp: Int): Int {
+                return if(currentExp * 2 <= e) {
+                    val v = rec(currentPow * currentPow, currentExp * 2)
+                    if(currentExp <= expLeft) {
+                        expLeft -= currentExp
+                        v * currentPow
+                    } else {
+                        v
+                    }
+                } else if(currentExp <= expLeft) {
+                    expLeft -= currentExp
+                    currentPow
+                } else {
+                    1
+                }
             }
-
-            if(p == 1) {
-                r *= b
-            }
-            return r
+            return rec(b, 1)
         }
-        fun pow(b: Long,  e: Long): Long {
 
+        fun pow(b: Long,  e: Int): Long {
             if(e < 0) {
                 throw IllegalArgumentException("Exponent must be non-negative")
             }
-            if(e == 0L) {
-                return 1
-            } else if(e == 1L) {
-                return b
-            }
+            var expLeft = e
 
-            var r = b
-            var p = e
-
-            while(p >= 2) {
-                r *= r
-                p -= 2
+            fun rec(currentPow: Long, currentExp: Int): Long {
+                return if(currentExp * 2 <= e) {
+                    val v = rec(currentPow * currentPow, currentExp * 2)
+                    if(currentExp <= expLeft) {
+                        expLeft -= currentExp
+                        v * currentPow
+                    } else {
+                        v
+                    }
+                } else if(currentExp <= expLeft) {
+                    expLeft -= currentExp
+                    currentPow
+                } else {
+                    1
+                }
             }
-
-            if(p == 1L) {
-                r *= b
-            }
-            return r
+            return rec(b, 1)
         }
 
         fun log10Floor(n: Int): Int {
