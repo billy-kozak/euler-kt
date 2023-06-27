@@ -55,6 +55,7 @@ fun main(args: Array<String>) {
         Pair(19, listOf(Problem19())),
         Pair(20, listOf(Problem20())),
         Pair(21, listOf(Problem21())),
+        Pair(22, listOf(Problem22a(), Problem22b())),
     )
     val progArgs = parseArgs(
         args,

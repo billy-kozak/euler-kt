@@ -40,6 +40,11 @@ sealed class RecursiveSequenceScope<in T, in P, out R> {
     abstract suspend fun emit(value: T)
 
     /**
+     * Emits all values to the [Iterator] being built and suspends until the next value is requested
+     */
+    abstract suspend fun emitAll(values: Iterable<T>)
+
+    /**
      * Makes recursive call to this [DeepRecursiveFunction] function putting the call activation frame on the heap,
      * as opposed to the actual call stack that is used by a regular recursive call.
      */
@@ -92,6 +97,12 @@ private class RecursiveSequenceScopeImpl<T, P, R>(
         suspendCoroutineUninterceptedOrReturn {cont ->
             this.cont = cont
             COROUTINE_SUSPENDED
+        }
+    }
+
+    override suspend fun emitAll(values: Iterable<T>) {
+        for(value in values) {
+            emit(value)
         }
     }
 
