@@ -22,6 +22,7 @@ import euler_kt.main.util.coroutines.RecursiveSequence
 import java.math.BigInteger
 
 class LongFactor(val factor: Long, val exponent: Int = 1) {
+
     override fun toString(): String {
         if(exponent == 1) {
              return factor.toString()
@@ -31,7 +32,7 @@ class LongFactor(val factor: Long, val exponent: Int = 1) {
     }
 }
 
-class FactorizedLong: Iterable<LongFactor> {
+class FactorizedLong: Iterable<LongFactor>, Comparable<FactorizedLong> {
 
     val factors: List<LongFactor>
     val numFactors: Int by lazy {computeNumFactors()}
@@ -48,6 +49,10 @@ class FactorizedLong: Iterable<LongFactor> {
 
     constructor(vararg primeFactors: Long) {
         this.factors = primeFactors.map(::LongFactor).toList()
+    }
+
+    companion object {
+        val ONE = FactorizedLong(listOf())
     }
 
     private fun computeValue(): Long {
@@ -99,6 +104,18 @@ class FactorizedLong: Iterable<LongFactor> {
         }
     }
 
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return when(other) {
+            is FactorizedLong -> value == other.value
+            is Long -> value == other
+            else -> false
+        }
+    }
+
     override fun iterator(): Iterator<LongFactor> {
         return factors.iterator()
     }
@@ -119,8 +136,8 @@ class FactorizedLong: Iterable<LongFactor> {
         return value.compareTo(x.toLong())
     }
 
-    operator fun compareTo(x: FactorizedLong): Int {
-        return value.compareTo(x.value)
+    override operator fun compareTo(other: FactorizedLong): Int {
+        return value.compareTo(other.value)
     }
 
     operator fun times(other: Long): FactorizedLong {
