@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
         Pair(4, listOf(Problem4())),
         Pair(5, listOf(Problem5())),
         Pair(6, listOf(Problem6a(), Problem6b())),
-        Pair(7, listOf(Problem7a(), Problem7b())),
+        Pair(7, listOf(Problem7a(), Problem7b(), Problem7c())),
         Pair(8, listOf(Problem8a(), Problem8b(), Problem8c())),
         Pair(9, listOf(Problem9())),
         Pair(10, listOf(Problem10())),

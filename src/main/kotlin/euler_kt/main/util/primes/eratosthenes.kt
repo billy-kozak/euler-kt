@@ -22,6 +22,9 @@ import euler_kt.main.util.functions.oddLongToNaturalInt
 import euler_kt.main.util.primes.Precompute.Companion.startPrimeListFromPrecompute
 import euler_kt.main.util.structures.BijectionBooleanArray
 import euler_kt.main.util.structures.FunctionBackedGrowOnlyList
+import euler_kt.main.util.structures.PackedBooleanBijectionArray
+
+private const val SQRT_LONG_MAX: Long = 3037000499L
 
 private val WHEEL_INCREMENTS: List<Int> = listOf(
     4, 2, 4, 2, 4, 6, 2, 6
@@ -145,8 +148,8 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
 
 fun eratosthenesSequence(n: Long) = sequence {
     // save space, by building a mark list which is only valid for the "spokes" of the wheel factorization algorithm
-    val sieve = BijectionBooleanArray(
-        (((n / 30) + 1) * 30) + 1, ::wheelFactorizationBijectionFunction
+    val sieve = PackedBooleanBijectionArray(
+        (((n / 30) + 1) * 30) + 1, ::longWheelFactorizationBijectionFunction
     )
 
     for(i in arrayOf(2L, 3L, 5L)) {
@@ -159,12 +162,16 @@ fun eratosthenesSequence(n: Long) = sequence {
     var incIdx = 0
 
     while(i <= n) {
+
         if(!sieve[i]) {
             yield(i)
-            var j = i * i
-            while(j <= n) {
-                sieve[j] = true
-                j += i * 2
+
+            if(i <= SQRT_LONG_MAX) {
+                var j = i * i
+                while (j <= n) {
+                    sieve[j] = true
+                    j += i * 2
+                }
             }
         }
         i += WHEEL_INCREMENTS[incIdx]

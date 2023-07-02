@@ -30,10 +30,24 @@ class BijectionBooleanArray <in N: Number> private constructor (
     ): this(bijection, BooleanArray(bijection(max) + 1))
 
     operator fun get(index: N): Boolean {
-        return array[bijection(index)]
+        val b = bijection(index)
+        try {
+            return array[b]
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            throw ArrayIndexOutOfBoundsException("Index $index->${b} is out of bounds for array of size ${array.size}")
+        } catch(e: NegativeArraySizeException) {
+            throw NegativeArraySizeException("Index $index->${b} was negative")
+        }
     }
 
     operator fun set(index: N, value: Boolean) {
-        array[bijection(index)] = value
+        val b = bijection(index)
+        try {
+            array[b] = value
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            throw ArrayIndexOutOfBoundsException("Index $index->${b} is out of bounds for array of size ${array.size}")
+        } catch(e: NegativeArraySizeException) {
+            throw NegativeArraySizeException("Index $index->${b} was negative")
+        }
     }
 }

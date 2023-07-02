@@ -19,9 +19,7 @@
 package euler_kt.main.problems
 
 import euler_kt.main.framework.EulerProblem
-import euler_kt.main.util.primes.InfiniteEratosthenesSequence
-import euler_kt.main.util.primes.Precompute
-import euler_kt.main.util.primes.primeNumberTheoremApproximateNthPrime
+import euler_kt.main.util.primes.*
 
 abstract class Problem7(
     override val defaultKeyParam: Int = 10001
@@ -65,6 +63,25 @@ class Problem7b(
     override fun run(keyParam: Int): Long {
         val approximatePrimeVal = primeNumberTheoremApproximateNthPrime(keyParam) * 2
         val sequence = InfiniteEratosthenesSequence(Precompute.startPrimeListFromPrecompute(), approximatePrimeVal)
+        return sequence.take(keyParam).last()
+    }
+}
+
+class Problem7c(
+    defaultKeyParam: Int = 1000000000
+): Problem7(defaultKeyParam) {
+
+    override fun validate(result: Number): Boolean {
+        return result == 22801763489L
+    }
+
+    override fun explain(): String {
+        return "Solve for n = 1 billion"
+    }
+
+    override fun run(keyParam: Int): Long {
+        val approximatePrimeVal = moreConservativeApproximateNthPrime(keyParam)
+        val sequence = eratosthenesSequence(approximatePrimeVal)
         return sequence.take(keyParam).last()
     }
 }

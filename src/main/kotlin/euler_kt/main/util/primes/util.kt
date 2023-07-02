@@ -20,31 +20,40 @@ package euler_kt.main.util.primes
 
 import java.lang.IllegalArgumentException
 import kotlin.math.ln
+import kotlin.math.log2
 import kotlin.math.roundToLong
 
 fun primeNumberTheoremApproximateNthPrime(n: Int): Long {
     return (n * ln(n.toDouble())).roundToLong()
 }
 
+fun moreConservativeApproximateNthPrime(n: Int): Long {
+    return (n * log2(n.toDouble())).roundToLong()
+}
+
 fun wheelFactorizationBijectionFunction(v: Long): Int {
+    return longWheelFactorizationBijectionFunction(v).toInt()
+}
+
+fun longWheelFactorizationBijectionFunction(v: Long): Long {
     when(v) {
         2L -> return 0
         3L -> return 1
         5L -> return 3
     }
 
-    val div = v / 30
-    val mod = v % 30
+    val div = v / 30L
+    val mod = v % 30L
 
     when(mod) {
-        1L -> return ((div * 8 + 3).toInt())
-        7L -> return (div * 8 + 4).toInt()
-        11L -> return (div * 8 + 5).toInt()
-        13L -> return (div * 8 + 6).toInt()
-        17L -> return (div * 8 + 7).toInt()
-        19L -> return (div * 8 + 8).toInt()
-        23L -> return (div * 8 + 9).toInt()
-        29L -> return (div * 8 + 10).toInt()
+        1L -> return (div * 8L + 3)
+        7L -> return (div * 8L + 4)
+        11L -> return (div * 8L + 5)
+        13L -> return (div * 8L + 6)
+        17L -> return (div * 8L + 7)
+        19L -> return (div * 8L + 8)
+        23L -> return (div * 8L + 9)
+        29L -> return (div * 8L + 10)
     }
 
     // We can't avoid these lookups in the wheel factorization algorithm, but we also don't care about the
