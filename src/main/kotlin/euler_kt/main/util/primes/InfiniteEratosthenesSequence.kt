@@ -82,7 +82,7 @@ class InfiniteEratosthenesSequence constructor(
             }
         }
 
-        for(i in 1 until knownPrimes.size) {
+        for(i in 3 until knownPrimes.size) {
             val p = knownPrimes[i]
             var nextMultiple = ((maxPrime / p) + 1) * p
             if(nextMultiple % 2 == 0L) {

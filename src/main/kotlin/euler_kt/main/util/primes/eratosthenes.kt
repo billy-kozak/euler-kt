@@ -111,7 +111,7 @@ private fun eratosthenesWithPrecompute(n: Long, primes: FunctionBackedGrowOnlyLi
         }
     }
 
-    for(i in 1 until primes.size) {
+    for(i in 3 until primes.size) {
         val p = primes[i]
         var nextMultiple = ((maxPrime / p) + 1) * p
         if(nextMultiple % 2 == 0L) {
