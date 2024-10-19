@@ -22,13 +22,22 @@ import euler_kt.main.util.coroutines.RecursiveSequence
 import java.math.BigInteger
 
 class LongFactor(val factor: Long, val exponent: Int = 1) {
-
     override fun toString(): String {
         if(exponent == 1) {
              return factor.toString()
         } else {
             return "$factor^$exponent"
         }
+    }
+    override fun equals(other: Any?): Boolean {
+        return when(other) {
+            is LongFactor -> factor == other.factor && exponent == other.exponent
+            else -> false
+        }
+    }
+    override fun hashCode(): Int {
+        val fHash = factor.hashCode()
+        return fHash xor exponent.rotateLeft(fHash.countLeadingZeroBits())
     }
 }
 

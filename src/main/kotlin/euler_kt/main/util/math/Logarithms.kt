@@ -23,6 +23,10 @@ fun logBase(base: Long, x: Double): Double {
     return log2(x) / log2(base.toDouble())
 }
 
+fun logBase(base: Long, x: Long): Double {
+    return log2(x.toDouble()) / log2(base.toDouble())
+}
+
 fun logBase(base: Double, x: Double): Double {
     return log2(x) / log2(base)
 }
