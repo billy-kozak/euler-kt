@@ -18,6 +18,17 @@
 
 package euler_kt.main.util.math
 
+fun euclidGCD(p1: Int, p2: Int): Int {
+    var a = p1
+    var b = p2
+
+    while(b != 0){
+        val temp = b
+        b = a % b
+        a = temp
+    }
+    return a
+}
 fun euclidGCD(p1: Long, p2: Long): Long {
 
     var a = p1

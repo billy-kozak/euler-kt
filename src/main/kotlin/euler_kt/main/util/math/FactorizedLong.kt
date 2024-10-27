@@ -19,7 +19,45 @@
 package euler_kt.main.util.math
 
 import euler_kt.main.util.coroutines.RecursiveSequence
+import euler_kt.main.util.primes.Precompute
+import euler_kt.main.util.primes.eratosthenesWithWheelFactorization
 import java.math.BigInteger
+
+fun generateAllFactorizedLongsUpTo(top: Int): Sequence<FactorizedLong> {
+    return generateAllFactorizedLongsUpTo(top.toLong())
+}
+
+fun generateAllFactorizedLongsUpTo(top: Int, primes: List<Long>): Sequence<FactorizedLong> {
+    return generateAllFactorizedLongsUpTo(top.toLong(), primes)
+}
+
+fun generateAllFactorizedLongsUpTo(top: Long): Sequence<FactorizedLong> {
+    val primes = if(top <= Precompute.largestPrime1024()) {
+        Precompute.sequence().map{it.toLong()}.takeWhile { it < top }.toList()
+    } else {
+        eratosthenesWithWheelFactorization(top)
+    }
+    return generateAllFactorizedLongsUpTo(top, primes)
+}
+fun generateAllFactorizedLongsUpTo(top: Long, primes: List<Long>): Sequence<FactorizedLong> {
+    class Param(val prev: FactorizedLong, val startIndex: Int)
+
+    return RecursiveSequence(Param(FactorizedLong.ONE, 0)) { args ->
+        val prev = args.prev
+        val startIndex = args.startIndex
+
+        for (i in startIndex until primes.size) {
+            val prime = primes[i]
+            val newFactor = prev.multiplyByPrime(prime)
+
+            if (newFactor.value >= top) {
+                return@RecursiveSequence
+            }
+            emit(newFactor)
+            callRecursive(Param(newFactor, i))
+        }
+    }
+}
 
 class LongFactor(val factor: Long, val exponent: Int = 1) {
     override fun toString(): String {
@@ -41,41 +79,28 @@ class LongFactor(val factor: Long, val exponent: Int = 1) {
     }
 }
 
-class FactorizedLong: Iterable<LongFactor>, Comparable<FactorizedLong> {
+class FactorizedLong private constructor(
+    val factors: List<LongFactor>, private val sorted: Boolean = false
+): Iterable<LongFactor>, Comparable<FactorizedLong> {
 
-    val factors: List<LongFactor>
+    val sortedFactors: List<LongFactor> by lazy {computeSortedFactors()}
     val numFactors: Int by lazy {computeNumFactors()}
     val numPrimeFactors get() = factors.size
     val value by lazy {computeValue()}
 
-    constructor(vararg primeFactors: LongFactor) {
-        this.factors = primeFactors.toList()
-    }
+    private var sortComputed = sorted
 
-    constructor(primeFactors: List<LongFactor>) {
-        this.factors = primeFactors
-    }
+    constructor(vararg primeFactors: LongFactor) : this(primeFactors.toList())
 
-    constructor(vararg primeFactors: Long) {
-        this.factors = primeFactors.map(::LongFactor).toList()
-    }
+    constructor(primeFactors: List<LongFactor>): this(primeFactors, false)
+
+    constructor(vararg primeFactors: Long): this(primeFactors.map(::LongFactor).toList())
 
     companion object {
-        val ONE = FactorizedLong(listOf())
-    }
-
-    private fun computeValue(): Long {
-        return factors.fold(1L) { acc, factor -> acc * IntegerMath.pow(factor.factor, factor.exponent) }
-    }
-
-    private fun computeNumFactors(): Int {
-        var n = 1
-
-        for(factor in factors) {
-            n *= factor.exponent.toInt() + 1
+        val ONE = FactorizedLong(listOf(), true)
+        fun fromSortedFactors(factors: List<LongFactor>): FactorizedLong {
+            return FactorizedLong(factors, true)
         }
-
-        return n
     }
 
     fun sumAllFactors(): Long {
@@ -147,6 +172,43 @@ class FactorizedLong: Iterable<LongFactor>, Comparable<FactorizedLong> {
 
     override operator fun compareTo(other: FactorizedLong): Int {
         return value.compareTo(other.value)
+    }
+
+    fun multiplyByPrime(prime: Long, exponent: Int = 1): FactorizedLong {
+        if(sortComputed) {
+            val itr = sortedFactors.iterator()
+            val newFactors = mutableListOf<LongFactor>()
+
+            while(itr.hasNext()) {
+                val next = itr.next()
+                if (next.factor == prime) {
+                    newFactors.add(LongFactor(prime, next.exponent + exponent))
+                    newFactors.addAll(itr.asSequence())
+                    return FactorizedLong(newFactors, true)
+                } else if(next.factor > prime) {
+                    newFactors.add(LongFactor(prime, exponent))
+                    newFactors.add(next)
+                    newFactors.addAll(itr.asSequence())
+                    return FactorizedLong(newFactors, true)
+                } else {
+                    newFactors.add(next)
+                }
+            }
+
+            newFactors.add(LongFactor(prime, exponent))
+            return FactorizedLong(newFactors, true)
+        } else {
+            val newFactors = factors.toMutableList()
+            for(i in 0 until newFactors.size) {
+                val factor = newFactors[i]
+                if(factor.factor == prime) {
+                    newFactors[i] = LongFactor(prime, factor.exponent + exponent)
+                    return FactorizedLong(newFactors)
+                }
+            }
+            newFactors.add(LongFactor(prime, exponent))
+            return FactorizedLong(newFactors)
+        }
     }
 
     operator fun times(other: Long): FactorizedLong {
@@ -262,5 +324,55 @@ class FactorizedLong: Iterable<LongFactor>, Comparable<FactorizedLong> {
         }
 
         return ret
+    }
+
+    fun isCoprimeTo(other: FactorizedLong): Boolean {
+        var i = 0
+        var k = 0
+
+        if(sortedFactors.isEmpty() != other.factors.isEmpty()) {
+            return true
+        }
+
+        while(true) {
+            val f1 = sortedFactors[i]
+            val f2 = other.sortedFactors[k]
+            if(f1.factor == f2.factor) {
+                return false
+            } else if(f1.factor < f2.factor) {
+                i += 1
+                if(i == factors.size) {
+                    return true
+                }
+            } else {
+                k += 1
+                if(k == other.factors.size) {
+                    return true
+                }
+            }
+        }
+    }
+
+    private fun computeSortedFactors(): List<LongFactor> {
+        if(sorted) {
+            return factors
+        } else {
+            sortComputed = true
+            return factors.sortedBy { it.factor }
+        }
+    }
+
+    private fun computeValue(): Long {
+        return factors.fold(1L) { acc, factor -> acc * IntegerMath.pow(factor.factor, factor.exponent) }
+    }
+
+    private fun computeNumFactors(): Int {
+        var n = 1
+
+        for(factor in factors) {
+            n *= factor.exponent.toInt() + 1
+        }
+
+        return n
     }
 }
